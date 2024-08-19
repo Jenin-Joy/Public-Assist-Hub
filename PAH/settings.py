@@ -43,6 +43,11 @@ INSTALLED_APPS = [
 
     'Admin',
     'Guest',
+    'Municipality',
+    'KSEB',
+    'PWD',
+    'MVD',
+    'User',
 ]
 
 MIDDLEWARE = [

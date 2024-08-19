@@ -12,4 +12,6 @@ urlpatterns = [
     path("pwd/", views.pwd, name="pwd"), 
     path("mvd/", views.mvd, name="mvd"), 
     path("kseb/", views.kseb, name="kseb"), 
+
+    path("login/", views.login, name="login"),
 ]

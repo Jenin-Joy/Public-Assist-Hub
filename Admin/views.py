@@ -14,6 +14,10 @@ def getData(data):
         datas.append({"data":i.to_dict(),"id":i.id})
     return datas
 
+# Homepage function
+def homepage(request):
+    return render(request, 'Admin/Homepage.html')
+
 # district insert and select function
 def district(request):
     districtdata = db.collection("tbl_district").stream()

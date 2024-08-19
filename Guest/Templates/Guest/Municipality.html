@@ -6,7 +6,7 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="" method="post">
+    <form action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <table>
             <tr>
@@ -24,6 +24,10 @@
             <tr>
                 <td>Address</td>
                 <td><textarea name="txt_address" id="" cols="20" rows="5"></textarea></td>
+            </tr>
+            <tr>
+                <td>Proof</td>
+                <td><input type="file" name="txt_photo" id=""></td>
             </tr>
             <tr>
                 <td>District</td>

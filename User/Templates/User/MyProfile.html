@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table cellpadding="10">
+        <tr>
+            <td colspan="2" align="center"><img src="{{user.user_photo}}" width="150" height="150" alt=""></td>
+        </tr>
+        <tr>
+            <td>Name</td>
+            <td>{{user.user_name}}</td>
+        </tr>
+        <tr>
+            <td>Contact</td>
+            <td>{{user.user_contact}}</td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td>{{user.user_email}}</td>
+        </tr>
+        <tr>
+            <td>Address</td>
+            <td width="100">{{user.user_address}}</td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center"><a href="{% url 'User:editprofile' %}">Edit Profile</a> <a href="">Change Password</a></td>
+        </tr>
+    </table>
+    {% if msg %}
+    <script>
+        alert('{{msg}}')
+        window.location = "{% url 'User:profile' %}"
+    </script>
+    {% endif %}
+</body>
+</html>

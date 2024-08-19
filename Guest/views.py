@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import firebase_admin
 from firebase_admin import firestore,auth,storage,credentials
 import pyrebase
@@ -44,7 +44,12 @@ def municipality(request):
             municipality = firebase_admin.auth.create_user(email=email,password=password)
         except (firebase_admin._auth_utils.EmailAlreadyExistsError, ValueError) as error:
             return render(request,"Guest/Municipality.html",{"msg":error})
-        db.collection("tbl_municipality").document(municipality.uid).set({"municipality_name":request.POST.get('txt_name'),"municipality_contact":request.POST.get('txt_contact'),"municipality_email":request.POST.get('txt_email'),"municipality_address":request.POST.get('txt_address'),"municipality_password":request.POST.get('txt_password'),"district_id":request.POST.get("sel_district")})
+        image = request.FILES.get("txt_photo")
+        if image:
+            path = "Municipality/" + image.name
+            sd.child(path).put(image)
+            download_url = sd.child(path).get_url(None)
+        db.collection("tbl_municipality").document(municipality.uid).set({"municipality_name":request.POST.get('txt_name'),"municipality_contact":request.POST.get('txt_contact'),"municipality_email":request.POST.get('txt_email'),"municipality_address":request.POST.get('txt_address'),"municipality_password":request.POST.get('txt_password'),"district_id":request.POST.get("sel_district"),"municipality_proof":download_url})
         return render(request,"Guest/Municipality.html",{"msg":"Sucessfully Registred"})
     else:
         return render(request,"Guest/Municipality.html",{"district":district})
@@ -95,7 +100,12 @@ def pwd(request):
             pwd = firebase_admin.auth.create_user(email=email, password=password)
         except (firebase_admin._auth_utils.EmailAlreadyExistsError, ValueError) as error:
             return render(request,"Guest/pwd.html",{'msg':error})
-        db.collection("tbl_pwd").document(pwd.uid).set({"pwd_name":request.POST.get('txt_name'),"pwd_contact":request.POST.get('txt_contact'),"pwd_email":request.POST.get('txt_email'),"pwd_address":request.POST.get('txt_address'),"pwd_password":request.POST.get('txt_password'),"district_id":request.POST.get("sel_district")})
+        image = request.FILES.get("txt_photo")
+        if image:
+            path = "PWD/" + image.name
+            sd.child(path).put(image)
+            download_url = sd.child(path).get_url(None)
+        db.collection("tbl_pwd").document(pwd.uid).set({"pwd_name":request.POST.get('txt_name'),"pwd_contact":request.POST.get('txt_contact'),"pwd_email":request.POST.get('txt_email'),"pwd_address":request.POST.get('txt_address'),"pwd_password":request.POST.get('txt_password'),"district_id":request.POST.get("sel_district"),"pwd_proof":download_url})
         return render(request,"Guest/pwd.html",{'msg':'Registred Sucessfully'})
     else:
         return render(request,"Guest/pwd.html",{'district':district})
@@ -111,7 +121,12 @@ def mvd(request):
             mvd = firebase_admin.auth.create_user(email=email, password=password)
         except (firebase_admin._auth_utils.EmailAlreadyExistsError, ValueError) as error:
             return render(request,"Guest/mvd.html",{'msg':error})
-        db.collection("tbl_mvd").document(mvd.uid).set({"mvd_name":request.POST.get('txt_name'),"mvd_contact":request.POST.get('txt_contact'),"mvd_email":request.POST.get('txt_email'),"mvd_address":request.POST.get('txt_address'),"mvd_password":request.POST.get('txt_password'),"district_id":request.POST.get("sel_district")})
+        image = request.FILES.get("txt_photo")
+        if image:
+            path = "Mvd/" + image.name
+            sd.child(path).put(image)
+            download_url = sd.child(path).get_url(None)
+        db.collection("tbl_mvd").document(mvd.uid).set({"mvd_name":request.POST.get('txt_name'),"mvd_contact":request.POST.get('txt_contact'),"mvd_email":request.POST.get('txt_email'),"mvd_address":request.POST.get('txt_address'),"mvd_password":request.POST.get('txt_password'),"district_id":request.POST.get("sel_district"),"mvd_proof":download_url})
         return render(request,"Guest/mvd.html",{'msg':'Registred Sucessfully'})
     else:
         return render(request,"Guest/mvd.html",{'district':district})
@@ -127,7 +142,50 @@ def kseb(request):
             kseb = firebase_admin.auth.create_user(email=email,password=password)
         except (firebase_admin._auth_utils.EmailAlreadyExistsError, ValueError) as error:
             return render(request,"Guest/kseb.html",{"msg":error})
-        db.collection("tbl_kseb").document(kseb.uid).set({"kseb_name":request.POST.get('txt_name'),"kseb_contact":request.POST.get('txt_contact'),"kseb_email":request.POST.get('txt_email'),"kseb_address":request.POST.get('txt_address'),"kseb_password":request.POST.get('txt_password'),"localplace_id":request.POST.get("sel_locplace")})
+        image = request.FILES.get("txt_photo")
+        if image:
+            path = "Kseb/" + image.name
+            sd.child(path).put(image)
+            download_url = sd.child(path).get_url(None)
+        db.collection("tbl_kseb").document(kseb.uid).set({"kseb_name":request.POST.get('txt_name'),"kseb_contact":request.POST.get('txt_contact'),"kseb_email":request.POST.get('txt_email'),"kseb_address":request.POST.get('txt_address'),"kseb_password":request.POST.get('txt_password'),"localplace_id":request.POST.get("sel_locplace"),"kseb_proof":download_url})
         return render(request,"Guest/kseb.html",{"msg":"Registred Sucessfully"})
     else:
         return render(request,"Guest/kseb.html",{"district":district})
+
+# login function
+def login(request):
+    if request.method == "POST":
+        email = request.POST.get("txt_email")
+        password = request.POST.get("txt_password")
+        try:
+            data = auth.sign_in_with_email_and_password(email,password)
+        except:
+            return render(request,"Guest/login.html",{"msg":"Invalid Email or Password"})
+        userdata = db.collection("tbl_user").document(data["localId"]).get().to_dict()
+        municipalitydata = db.collection("tbl_municipality").document(data["localId"]).get().to_dict()
+        mvddata = db.collection("tbl_mvd").document(data["localId"]).get().to_dict()
+        pwddata = db.collection("tbl_pwd").document(data["localId"]).get().to_dict()
+        ksebdata = db.collection("tbl_kseb").document(data["localId"]).get().to_dict()
+        admindata = db.collection("tbl_admindata").document(data["localId"]).get().to_dict()
+        if userdata:
+            request.session["uid"] = data["localId"]
+            return redirect("User:homepage")
+        elif municipalitydata:
+            request.session["mid"] = data["localId"]
+            return redirect("Municipality:homepage")
+        elif mvddata:
+            request.session["mvdid"] = data["localId"]
+            return redirect("Mvd:homepage")
+        elif pwddata:
+            request.session["pwdid"] = data["localId"]
+            return redirect("Pwd:homepage")
+        elif ksebdata:
+            request.session["ksebid"] = data["localId"]
+            return redirect("Kseb:homepage")
+        elif admindata:
+            request.session["aid"] = data["localId"]
+            return redirect("Admin:homepage")
+        else:
+            return render(request,"Guest/Login.html",{"msg":"Error"})
+    else:
+        return render(request,"Guest/login.html")

@@ -2,6 +2,9 @@ from django.urls import path
 from Admin import views
 app_name = "Admin"
 urlpatterns = [
+    # Home Page
+    path('homepage/',views.homepage,name="homepage"),
+    
     # district
     path('district/',views.district,name="district"),
     path('deletedistrict/<str:did>',views.deletedistrict,name="deletedistrict"),
