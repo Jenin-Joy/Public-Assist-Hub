@@ -7,5 +7,12 @@
 </head>
 <body>
     Welcome MVD
+    <br><a href="{% url 'MVD:profile' %}">Profile</a>
+    {% if msg1 %}
+    <script>
+        alert('Password Reset Link is sented to {{msg1}} email');
+        window.location = "{% url 'MVD:homepage' %}"
+    </script>
+    {% endif %}
 </body>
 </html>

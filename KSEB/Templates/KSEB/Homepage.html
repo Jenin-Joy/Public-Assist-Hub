@@ -7,5 +7,12 @@
 </head>
 <body>
     Welcome KSEB
+    <br><a href="{% url 'KSEB:profile' %}">Profile</a>
+    {% if msg1 %}
+    <script>
+        alert('Password Reset Link is sented to {{msg1}} email');
+        window.location = "{% url 'KSEB:homepage' %}"
+    </script>
+    {% endif %}
 </body>
 </html>

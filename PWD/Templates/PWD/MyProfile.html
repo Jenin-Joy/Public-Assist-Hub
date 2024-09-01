@@ -8,32 +8,29 @@
 <body>
     <table cellpadding="10">
         <tr>
-            <td colspan="2" align="center"><img src="{{user.user_photo}}" width="150" height="150" alt=""></td>
-        </tr>
-        <tr>
             <td>Name</td>
-            <td>{{user.user_name}}</td>
+            <td>{{pwd.pwd_name}}</td>
         </tr>
         <tr>
             <td>Contact</td>
-            <td>{{user.user_contact}}</td>
+            <td>{{pwd.pwd_contact}}</td>
         </tr>
         <tr>
             <td>Email</td>
-            <td>{{user.user_email}}</td>
+            <td>{{pwd.pwd_email}}</td>
         </tr>
         <tr>
             <td>Address</td>
-            <td width="100">{{user.user_address}}</td>
+            <td width="100">{{pwd.pwd_address}}</td>
         </tr>
         <tr>
-            <td colspan="2" align="center"><a href="{% url 'User:editprofile' %}">Edit Profile</a> <a href="{% url 'User:changepassword' %}">Change Password</a></td>
+            <td colspan="2" align="center"><a href="{% url 'PWD:editprofile' %}">Edit Profile</a> <a href="{% url 'PWD:changepassword' %}">Change Password</a></td>
         </tr>
     </table>
     {% if msg %}
     <script>
         alert('{{msg}}')
-        window.location = "{% url 'User:profile' %}"
+        window.location = "{% url 'PWD:profile' %}"
     </script>
     {% endif %}
 </body>

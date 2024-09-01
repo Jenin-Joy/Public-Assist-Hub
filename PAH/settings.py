@@ -135,3 +135,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 cred = credentials.Certificate('DB\public-assist-hub-firebase-adminsdk-kn2cg-77c51f04fa.json')
 app = firebase_admin.initialize_app(cred,{'storageBucket':'public-assist-hub.appspot.com'})
+
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'Publicassisthub@gmail.com'
+EMAIL_HOST_PASSWORD = 'mqghaykauzuacito'

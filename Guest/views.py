@@ -49,7 +49,7 @@ def municipality(request):
             path = "Municipality/" + image.name
             sd.child(path).put(image)
             download_url = sd.child(path).get_url(None)
-        db.collection("tbl_municipality").document(municipality.uid).set({"municipality_name":request.POST.get('txt_name'),"municipality_contact":request.POST.get('txt_contact'),"municipality_email":request.POST.get('txt_email'),"municipality_address":request.POST.get('txt_address'),"municipality_password":request.POST.get('txt_password'),"district_id":request.POST.get("sel_district"),"municipality_proof":download_url})
+        db.collection("tbl_municipality").document(municipality.uid).set({"municipality_name":request.POST.get('txt_name'),"municipality_contact":request.POST.get('txt_contact'),"municipality_email":request.POST.get('txt_email'),"municipality_address":request.POST.get('txt_address'),"municipality_password":request.POST.get('txt_password'),"district_id":request.POST.get("sel_district"),"municipality_proof":download_url,"municipality_status":0})
         return render(request,"Guest/Municipality.html",{"msg":"Sucessfully Registred"})
     else:
         return render(request,"Guest/Municipality.html",{"district":district})
@@ -105,7 +105,7 @@ def pwd(request):
             path = "PWD/" + image.name
             sd.child(path).put(image)
             download_url = sd.child(path).get_url(None)
-        db.collection("tbl_pwd").document(pwd.uid).set({"pwd_name":request.POST.get('txt_name'),"pwd_contact":request.POST.get('txt_contact'),"pwd_email":request.POST.get('txt_email'),"pwd_address":request.POST.get('txt_address'),"pwd_password":request.POST.get('txt_password'),"district_id":request.POST.get("sel_district"),"pwd_proof":download_url})
+        db.collection("tbl_pwd").document(pwd.uid).set({"pwd_name":request.POST.get('txt_name'),"pwd_contact":request.POST.get('txt_contact'),"pwd_email":request.POST.get('txt_email'),"pwd_address":request.POST.get('txt_address'),"pwd_password":request.POST.get('txt_password'),"district_id":request.POST.get("sel_district"),"pwd_proof":download_url,"pwd_status":0})
         return render(request,"Guest/pwd.html",{'msg':'Registred Sucessfully'})
     else:
         return render(request,"Guest/pwd.html",{'district':district})
@@ -126,7 +126,7 @@ def mvd(request):
             path = "Mvd/" + image.name
             sd.child(path).put(image)
             download_url = sd.child(path).get_url(None)
-        db.collection("tbl_mvd").document(mvd.uid).set({"mvd_name":request.POST.get('txt_name'),"mvd_contact":request.POST.get('txt_contact'),"mvd_email":request.POST.get('txt_email'),"mvd_address":request.POST.get('txt_address'),"mvd_password":request.POST.get('txt_password'),"district_id":request.POST.get("sel_district"),"mvd_proof":download_url})
+        db.collection("tbl_mvd").document(mvd.uid).set({"mvd_name":request.POST.get('txt_name'),"mvd_contact":request.POST.get('txt_contact'),"mvd_email":request.POST.get('txt_email'),"mvd_address":request.POST.get('txt_address'),"mvd_password":request.POST.get('txt_password'),"district_id":request.POST.get("sel_district"),"mvd_proof":download_url,"mvd_status":0})
         return render(request,"Guest/mvd.html",{'msg':'Registred Sucessfully'})
     else:
         return render(request,"Guest/mvd.html",{'district':district})
@@ -147,7 +147,7 @@ def kseb(request):
             path = "Kseb/" + image.name
             sd.child(path).put(image)
             download_url = sd.child(path).get_url(None)
-        db.collection("tbl_kseb").document(kseb.uid).set({"kseb_name":request.POST.get('txt_name'),"kseb_contact":request.POST.get('txt_contact'),"kseb_email":request.POST.get('txt_email'),"kseb_address":request.POST.get('txt_address'),"kseb_password":request.POST.get('txt_password'),"localplace_id":request.POST.get("sel_locplace"),"kseb_proof":download_url})
+        db.collection("tbl_kseb").document(kseb.uid).set({"kseb_name":request.POST.get('txt_name'),"kseb_contact":request.POST.get('txt_contact'),"kseb_email":request.POST.get('txt_email'),"kseb_address":request.POST.get('txt_address'),"kseb_password":request.POST.get('txt_password'),"localplace_id":request.POST.get("sel_locplace"),"kseb_proof":download_url,"kseb_status":0})
         return render(request,"Guest/kseb.html",{"msg":"Registred Sucessfully"})
     else:
         return render(request,"Guest/kseb.html",{"district":district})
@@ -166,26 +166,66 @@ def login(request):
         mvddata = db.collection("tbl_mvd").document(data["localId"]).get().to_dict()
         pwddata = db.collection("tbl_pwd").document(data["localId"]).get().to_dict()
         ksebdata = db.collection("tbl_kseb").document(data["localId"]).get().to_dict()
-        admindata = db.collection("tbl_admindata").document(data["localId"]).get().to_dict()
+        admindata = db.collection("tbl_admin").document(data["localId"]).get().to_dict()
         if userdata:
-            request.session["uid"] = data["localId"]
-            return redirect("User:homepage")
+            if userdata["user_password"] == password:
+                request.session["uid"] = data["localId"]
+                return redirect("User:homepage")
+            else:
+                db.collection("tbl_user").document(data["localId"]).update({"user_password":password})
+                return redirect("User:homepage")
         elif municipalitydata:
-            request.session["mid"] = data["localId"]
-            return redirect("Municipality:homepage")
+            if municipalitydata["municipality_status"] == 0:
+                return render(request,"Guest/Login.html",{"msg":"Your Verification is Pending"})
+            elif municipalitydata["municipality_status"] == 2:
+                return render(request,"Guest/Login.html",{"msg":"Your Account is Deactivated"})
+            else:
+                if municipalitydata["municipality_password"] == password:
+                    request.session["mid"] = data["localId"]
+                    return redirect("Municipality:homepage")
+                else:
+                    db.collection("tbl_municipality").document(data["localId"]).update({"municipality_password":password})
+                    return redirect("Municipality:homepage")
         elif mvddata:
-            request.session["mvdid"] = data["localId"]
-            return redirect("Mvd:homepage")
+            if mvddata["mvd_status"] == 0:
+                return render(request,"Guest/Login.html",{"msg":"Your Verification is Pending"})
+            elif mvddata["mvd_status"] == 2:
+                return render(request,"Guest/Login.html",{"msg":"Your Account is Deactivated"})
+            else:
+                if mvddata["mvd_password"] == password:
+                    request.session["mvdid"] = data["localId"]
+                    return redirect("MVD:homepage")
+                else:
+                    db.collection("tbl_mvd").document(data["localId"]).update({"mvd_password":password})
+                    return redirect("MVD:homepage")
         elif pwddata:
-            request.session["pwdid"] = data["localId"]
-            return redirect("Pwd:homepage")
+            if pwddata["pwd_status"] == 0:
+                return render(request,"Guest/Login.html",{"msg":"Your Verification is Pending"})
+            elif pwddata["pwd_status"] == 2:
+                return render(request,"Guest/Login.html",{"msg":"Your Account is Deactivated"})
+            else:
+                if pwddata["pwd_password"] == password:
+                    request.session["pwdid"] = data["localId"]
+                    return redirect("PWD:homepage")
+                else:
+                    db.collection("tbl_pwd").document(data["localId"]).update({"pwd_password":password})
+                    return redirect("PWD:homepage")
         elif ksebdata:
-            request.session["ksebid"] = data["localId"]
-            return redirect("Kseb:homepage")
+            if ksebdata["kseb_status"] == 0:
+                return render(request,"Guest/Login.html",{"msg":"Your Verification is Pending"})
+            elif ksebdata["kseb_status"] == 2:
+                return render(request,"Guest/Login.html",{"msg":"Your Account is Deactivated"})
+            else:
+                if ksebdata["kseb_password"] == password:
+                    request.session["ksebid"] = data["localId"]
+                    return redirect("KSEB:homepage")
+                else:
+                    db.collection("tbl_kseb").document(data["localId"]).update({"kseb_password":password})
+                    return redirect("KSEB:homepage")
         elif admindata:
             request.session["aid"] = data["localId"]
             return redirect("Admin:homepage")
         else:
             return render(request,"Guest/Login.html",{"msg":"Error"})
     else:
-        return render(request,"Guest/login.html")
+        return render(request,"Guest/Login.html")

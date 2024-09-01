@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <table cellpadding="10">
+        <tr>
+            <td>#</td>
+            <td>Name</td>
+            <td>Contact</td>
+            <td>Email</td>
+            <td>Address</td>
+            <td>Proof</td>
+            <td>District</td>
+            <td>Place</td>
+            <td>Local Place</td>
+            <td>Action</td>
+        </tr>
+        {% for i in kseb %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{i.kseb.kseb_name}}</td>
+            <td>{{i.kseb.kseb_contact}}</td>
+            <td>{{i.kseb.kseb_email}}</td>
+            <td>{{i.kseb.kseb_address}}</td>
+            <td><a href="{{i.kseb.kseb_proof}}"><img src="{{i.kseb.kseb_proof}}" width="100" height="100" alt=""></a></td>
+            <td>{{i.district.district_name}}</td>
+            <td>{{i.place.place_name}}</td>
+            <td>{{i.localplace.localplace_name}}</td>
+            <td><a href="{% url 'Admin:ksebverification' i.id 1 %}">Approve</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -7,5 +7,26 @@
 </head>
 <body>
     Welcome Admin
+    <br><a href="{% url 'Admin:newmunicipality' %}">New Municipality</a>
+    <br><a href="{% url 'Admin:approvedmunicipality' %}">Approved Municipality</a>
+    <br><a href="{% url 'Admin:rejectedmunicipality' %}">Rejected Municipality</a>
+
+    <br><a href="{% url 'Admin:newkseb' %}">New kseb</a>
+    <br><a href="{% url 'Admin:approvedkseb' %}">Approved kseb</a>
+    <br><a href="{% url 'Admin:rejectedkseb' %}">Rejected kseb</a>
+
+    <br><a href="{% url 'Admin:newmvd' %}">New mvd</a>
+    <br><a href="{% url 'Admin:approvedmvd' %}">Approved mvd</a>
+    <br><a href="{% url 'Admin:rejectedmvd' %}">Rejected mvd</a>
+
+    <br><a href="{% url 'Admin:newpwd' %}">New pwd</a>
+    <br><a href="{% url 'Admin:approvedpwd' %}">Approved pwd</a>
+    <br><a href="{% url 'Admin:rejectedpwd' %}">Rejected pwd</a>
+    {% if msg %}
+    <script>
+        alert("{{msg}}")
+        window.location = "{% url 'Admin:homepage' %}"
+    </script>
+    {% endif %}
 </body>
 </html>
