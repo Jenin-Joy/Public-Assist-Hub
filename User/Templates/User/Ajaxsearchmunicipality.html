@@ -1,0 +1,11 @@
+<div>
+    {% for i in data %}
+    <div>
+        <div>Name : {{i.data.municipality_name}}</div>
+        <div>Contact : {{i.data.municipality_contact}}</div>
+        <div>Email : {{i.data.municipality_email}}</div>
+        <div>Address : {{i.data.municipality_address}}</div>
+        <div><a href="{% url 'User:municipalityrequest' i.id %}">Request</a></div>
+    </div>
+    {% endfor %}
+</div>

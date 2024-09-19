@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgb(221, 221, 221);
+            border-radius: 10px;
+            width: 700px;
+        }
+        tr:nth-child(even) {
+            background-color: rgb(242, 242, 242);
+        }
+        tr:hover {
+            background-color: rgb(225, 225, 225);
+        }
+        table:hover {
+            transition: transform 0.3s ease-in-out;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <table cellpadding="10" align="center">
+        <tr>
+            <th colspan="6">Mvd Request</th>
+        </tr>
+        <tr>
+            <td>#</td>
+            <td>Photo</td>
+            <td>Description</td>
+            <td>Date</td>
+            <td>Mvd</td>
+            <td>Reply</td>
+        </tr>
+        {% for i in mvdrequest %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td><a href="{{i.data.request_photo}}"><img src="{{i.data.request_photo}}" width="80" height="80" alt=""></a></td>
+            <td>{{i.data.request_description}}</td>
+            <td>{{i.data.request_date|date}}</td>
+            <td>{{i.mvd.mvd_name}}</td>
+            <td>
+                {% if i.data.request_reply == "" %}
+                <span>Not Replyed</span>
+                {% else %}
+                {{i.data.request_reply}}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <table cellpadding="10" align="center">
+        <tr>
+            <th colspan="6">Pwd Request</th>
+        </tr>
+        <tr>
+            <td>#</td>
+            <td>Photo</td>
+            <td>Description</td>
+            <td>Date</td>
+            <td>Pwd</td>
+            <td>Reply</td>
+        </tr>
+        {% for i in pwdrequest %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td><a href="{{i.data.request_photo}}"><img src="{{i.data.request_photo}}" width="80" height="80" alt=""></a></td>
+            <td>{{i.data.request_description}}</td>
+            <td>{{i.data.request_date|date}}</td>
+            <td>{{i.pwd.pwd_name}}</td>
+            <td>
+                {% if i.data.request_reply == "" %}
+                <span>Not Replyed</span>
+                {% else %}
+                {{i.data.request_reply}}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <table cellpadding="10" align="center">
+        <tr>
+            <th colspan="6">Municipality Request</th>
+        </tr>
+        <tr>
+            <td>#</td>
+            <td>Photo</td>
+            <td>Description</td>
+            <td>Date</td>
+            <td>Municipality</td>
+            <td>Reply</td>
+        </tr>
+        {% for i in municipalityrequest %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td><a href="{{i.data.request_photo}}"><img src="{{i.data.request_photo}}" width="80" height="80" alt=""></a></td>
+            <td>{{i.data.request_description}}</td>
+            <td>{{i.data.request_date|date}}</td>
+            <td>{{i.municipality.municipality_name}}</td>
+            <td>
+                {% if i.data.request_reply == "" %}
+                <span>Not Replyed</span>
+                {% else %}
+                {{i.data.request_reply}}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <table cellpadding="10" align="center">
+        <tr>
+            <th colspan="6">Kseb Request</th>
+        </tr>
+        <tr>
+            <td>#</td>
+            <td>Photo</td>
+            <td>Description</td>
+            <td>Date</td>
+            <td>Kseb</td>
+            <td>Reply</td>
+        </tr>
+        {% for i in ksebrequest %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td><a href="{{i.data.request_photo}}"><img src="{{i.data.request_photo}}" width="80" height="80" alt=""></a></td>
+            <td>{{i.data.request_description}}</td>
+            <td>{{i.data.request_date|date}}</td>
+            <td>{{i.kseb.kseb_name}}</td>
+            <td>
+                {% if i.data.request_reply == "" %}
+                <span>Not Replyed</span>
+                {% else %}
+                {{i.data.request_reply}}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -11,4 +11,35 @@ urlpatterns = [
     path("editprofile/",views.editprofile,name="editprofile"),
     path("changepassword/",views.changepassword,name="changepassword"),
 
+    # Search PWD
+    path("searchpwd/", views.searchpwd, name="searchpwd"),
+    path("ajaxsearchpwd/", views.ajaxsearchpwd, name="ajaxsearchpwd"),
+
+    # Search MVD
+    path("searchmvd/", views.searchmvd, name="searchmvd"),
+    path("ajaxsearchmvd/", views.ajaxsearchmvd, name="ajaxsearchmvd"),
+
+    # Search Municipality
+    path("searchmunicipality/", views.searchmunicipality, name="searchmunicipality"),
+    path("ajaxsearchmunicipality/", views.ajaxsearchmunicipality, name="ajaxsearchmunicipality"),
+
+    # Search Kseb
+    path("searchKseb/", views.searchKseb, name="searchKseb"),
+    path("ajaxsearchkseb/", views.ajaxsearchkseb, name="ajaxsearchkseb"),
+
+    # Mvd Request
+    path("mvdrequest/<str:id>", views.mvdrequest, name="mvdrequest"),
+
+    # Kseb Request
+    path("ksebrequest/<str:id>", views.ksebrequest, name="ksebrequest"),
+
+    # Pwd Request
+    path("pwdrequest/<str:id>", views.pwdrequest, name="pwdrequest"),
+
+    # Municipality Request
+    path("municipalityrequest/<str:id>", views.municipalityrequest, name="municipalityrequest"),
+
+    # My Request
+    path("myrequest/", views.myrequest, name="myrequest"),
+
 ]

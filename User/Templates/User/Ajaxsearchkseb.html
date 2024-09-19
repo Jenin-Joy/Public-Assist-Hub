@@ -1,0 +1,11 @@
+<div></div>
+    {% for i in data %}
+    <div>
+        <div>Name : {{i.data.kseb_name}}</div>
+        <div>Contact : {{i.data.kseb_contact}}</div>
+        <div>Email : {{i.data.kseb_email}}</div>
+        <div>Address : {{i.data.kseb_address}}</div>
+        <div><a href="{% url 'User:ksebrequest' i.id %}">Request</a></div>
+    </div>
+    {% endfor %}
+</div>

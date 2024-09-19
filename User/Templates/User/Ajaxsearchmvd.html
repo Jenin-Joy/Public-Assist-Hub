@@ -1,0 +1,11 @@
+<div>
+    {% for i in data %}
+    <div>
+        <div>Name : {{i.data.mvd_name}}</div>
+        <div>Contact : {{i.data.mvd_contact}}</div>
+        <div>Email : {{i.data.mvd_email}}</div>
+        <div>Address : {{i.data.mvd_address}}</div>
+        <div><a href="{% url 'User:mvdrequest' i.id %}">Request</a></div>
+    </div>
+    {% endfor %}
+</div>

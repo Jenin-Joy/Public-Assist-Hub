@@ -9,6 +9,11 @@
     Welcome User
     <br>
     <a href="{% url 'User:profile' %}">My Profile</a>
+    <br><a href="{% url 'User:searchmvd' %}">Mvd</a>
+    <br><a href="{% url 'User:searchpwd' %}">Pwd</a>
+    <br><a href="{% url 'User:searchmunicipality' %}">Municipality</a>
+    <br><a href="{% url 'User:searchKseb' %}">Kseb</a>
+    <br><a href="{% url 'User:myrequest' %}">My Request</a>
     {% if msg1 %}
     <script>
         alert('Password Reset Link is sented to {{msg1}} email');

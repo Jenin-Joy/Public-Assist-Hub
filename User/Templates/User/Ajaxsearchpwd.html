@@ -1,0 +1,11 @@
+<div>
+    {% for i in data %}
+    <div>
+        <div>Name : {{i.data.pwd_name}}</div>
+        <div>Contact : {{i.data.pwd_contact}}</div>
+        <div>Email : {{i.data.pwd_email}}</div>
+        <div>Address : {{i.data.pwd_address}}</div>
+        <div><a href="{% url 'User:pwdrequest' i.id %}">Request</a></div>
+    </div>
+    {% endfor %}
+</div>
