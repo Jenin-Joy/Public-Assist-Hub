@@ -41,3 +41,29 @@ def changepassword(request):
         [email],
     )
     return render(request,"KSEB/HomePage.html",{"msg1":email})
+
+# Request
+def viewrequest(request):
+    requestdata = []
+    req = db.collection("tbl_request").where("kseb_id", "==", request.session["ksebid"]).where("request_status", "==", 0).stream()
+    for r in req:
+        req = r.to_dict()
+        user = db.collection("tbl_user").document(req["user_id"]).get().to_dict()
+        requestdata.append({"data":r.to_dict(),"id":r.id,"user":user})
+    return render(request,"KSEB/View_Request.html",{"request":requestdata})
+
+def reply(request, id):
+    if request.method == "POST":
+        req = db.collection("tbl_request").document(id).update({"request_reply":request.POST.get("txt_reply"),"request_status":1})
+        return render(request,"KSEB/Reply.html",{"msg":"Reply Send Successfully"})
+    else:
+        return render(request,"KSEB/Reply.html")
+
+def replyedrequest(request):
+    requestdata = []
+    req = db.collection("tbl_request").where("kseb_id", "==", request.session["ksebid"]).where("request_status", "==", 1).stream()
+    for r in req:
+        req = r.to_dict()
+        user = db.collection("tbl_user").document(req["user_id"]).get().to_dict()
+        requestdata.append({"data":r.to_dict(),"id":r.id,"user":user})
+    return render(request,"KSEB/Replyed_Request.html",{"request":requestdata})

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgb(221, 221, 221);
+            border-radius: 10px;
+            width: 700px;
+        }
+        tr:nth-child(even) {
+            background-color: rgb(242, 242, 242);
+        }
+        tr:hover {
+            background-color: rgb(225, 225, 225);
+        }
+    </style>
+</head>
+<body>
+    <table cellpadding="10" align="center">
+        <tr>
+            <th colspan="6">Replyed Requests</th>
+        </tr>
+        <tr>
+            <td>#</td>
+            <td>Photo</td>
+            <td>Description</td>
+            <td>Date</td>
+            <td>User</td>
+            <td>Action</td>
+        </tr>
+        {% for i in request %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td><a href="{{i.data.request_photo}}"><img src="{{i.data.request_photo}}" width="80" height="80" alt=""></a></td>
+            <td>{{i.data.request_description}}</td>
+            <td>{{i.data.request_date|date}}</td>
+            <td>{{i.user.user_name}}</td>
+            <td>{{i.data.request_reply}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

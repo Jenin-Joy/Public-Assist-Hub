@@ -8,6 +8,8 @@
 <body>
     Welcome Municipality
     <br><a href="{% url 'Municipality:profile' %}">Profile</a>
+    <br><a href="{% url 'Municipality:viewrequest' %}">Request</a>
+    <br><a href="{% url 'Municipality:replyedrequest' %}">Replyed Request</a>
     {% if msg1 %}
     <script>
         alert('Password Reset Link is sented to {{msg1}} email');

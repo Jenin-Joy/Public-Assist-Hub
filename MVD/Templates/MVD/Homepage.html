@@ -8,6 +8,8 @@
 <body>
     Welcome MVD
     <br><a href="{% url 'MVD:profile' %}">Profile</a>
+    <br><a href="{% url 'MVD:viewrequest' %}">Request</a>
+    <br><a href="{% url 'MVD:replyedrequest' %}">Replyed Request</a>
     {% if msg1 %}
     <script>
         alert('Password Reset Link is sented to {{msg1}} email');
