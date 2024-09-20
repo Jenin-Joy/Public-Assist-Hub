@@ -15,4 +15,7 @@ urlpatterns = [
     path("viewrequest/",views.viewrequest,name="viewrequest"), 
     path("reply/<str:id>",views.reply,name="reply"), 
     path("replyedrequest/",views.replyedrequest,name="replyedrequest"), 
+
+    # Complaint
+    path("complaint/", views.complaint, name="complaint"),
 ]

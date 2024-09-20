@@ -270,3 +270,23 @@ def myrequest(request):
         ksebdata = db.collection("tbl_kseb").document(kseb["kseb_id"]).get().to_dict()
         ksebrequestdata.append({"data":k.to_dict(),"id":k.id,"kseb":ksebdata})
     return render(request,"User/My_Request.html",{"mvdrequest":mvdrequestdata, "pwdrequest":pwdrequestdata, "municipalityrequest":municipalityrequestdata, "ksebrequest":ksebrequestdata})
+
+# Complaint
+def complaint(request):
+    complaint = db.collection("tbl_complaint").where("user_id", "==", request.session["uid"]).stream()
+    complaintdata = getData(complaint)
+    if request.method == "POST":
+        db.collection("tbl_complaint").add({"complaint_title":request.POST.get("txt_title"),
+                                            "complaint_content":request.POST.get("txt_content"),
+                                            "complaint_date":datetime.now(),
+                                            "complaint_reply":"",
+                                            "complaint_status":0,
+                                            "complaint_photo":"",
+                                            "user_id":request.session["uid"],
+                                            "municipality_id":"",
+                                            "kseb_id":"",
+                                            "pwd_id":"",
+                                            "mvd_id":""})
+        return render(request,"User/Complaint.html",{"msg":"Complaint Send Sucessfully"})
+    else:
+        return render(request,"User/Complaint.html",{"complaint":complaintdata})

@@ -42,4 +42,7 @@ urlpatterns = [
     # My Request
     path("myrequest/", views.myrequest, name="myrequest"),
 
+    # Complaint
+    path("complaint/", views.complaint, name="complaint"),
+
 ]

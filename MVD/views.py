@@ -2,9 +2,20 @@ from django.shortcuts import render
 import firebase_admin
 from firebase_admin import firestore
 import pyrebase
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib import messages
+from datetime import datetime
 # Create your views here.
 
 db = firestore.client()
+
+# convert data into dictionary
+def getData(data):
+    datas = []
+    for i in data:
+        datas.append({"data":i.to_dict(),"id":i.id})
+    return datas
 
 # Homepage
 def homepage(request):
@@ -67,3 +78,23 @@ def replyedrequest(request):
         user = db.collection("tbl_user").document(req["user_id"]).get().to_dict()
         requestdata.append({"data":r.to_dict(),"id":r.id,"user":user})
     return render(request,"MVD/Replyed_Request.html",{"request":requestdata})
+
+# Complaint
+def complaint(request):
+    complaint = db.collection("tbl_complaint").where("mvd_id", "==", request.session["mvdid"]).stream()
+    complaintdata = getData(complaint)
+    if request.method == "POST":
+        db.collection("tbl_complaint").add({"complaint_title":request.POST.get("txt_title"),
+                                            "complaint_content":request.POST.get("txt_content"),
+                                            "complaint_date":datetime.now(),
+                                            "complaint_reply":"",
+                                            "complaint_status":0,
+                                            "complaint_photo":"",
+                                            "user_id":"",
+                                            "municipality_id":"",
+                                            "kseb_id":"",
+                                            "pwd_id":"",
+                                            "mvd_id":request.session["mvdid"]})
+        return render(request,"MVD/Complaint.html",{"msg":"Complaint Send Sucessfully"})
+    else:
+        return render(request,"MVD/Complaint.html",{"complaint":complaintdata})
