@@ -47,4 +47,9 @@ urlpatterns = [
     path('pwdverification/<str:id>/<int:status>', views.pwdverification,name="pwdverification"),
     path('approvedpwd/',views.approvedpwd,name="approvedpwd"),
     path('rejectedpwd/',views.rejectedpwd,name="rejectedpwd"),
+
+    # Complaint
+    path('complaint/',views.complaint,name="complaint"),
+    path('reply/<str:id>',views.reply,name="reply"),
+    path('replyedcomplaint/',views.replyedcomplaint,name="replyedcomplaint"),
 ]

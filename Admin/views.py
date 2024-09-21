@@ -289,3 +289,79 @@ def rejectedpwd(request):
         district = db.collection("tbl_district").document(mun["district_id"]).get().to_dict()
         pwd_data.append({"pwd":i.to_dict(), "district":district,"id":i.id})
     return render(request,"Admin/Rejected_Pwd.html",{"pwd":pwd_data})
+
+# Complaint
+def complaint(request):
+    userdata = []
+    pwddata = []
+    ksebdata = []
+    municipalitydata = []
+    mvddata = []
+    user = db.collection("tbl_complaint").where("user_id", "!=", "").where("complaint_status", "==", 0).stream()
+    for u in user:
+        us = u.to_dict()
+        userdetails = db.collection("tbl_user").document(us["user_id"]).get().to_dict()
+        userdata.append({"data":u.to_dict(),"id":u.id,"user":userdetails})
+    pwd = db.collection("tbl_complaint").where("pwd_id", "!=", "").where("complaint_status", "==", 0).stream()
+    for p in pwd:
+        pw = p.to_dict()
+        pwddetails = db.collection("tbl_pwd").document(pw["pwd_id"]).get().to_dict()
+        pwddata.append({"data":p.to_dict(),"id":p.id,"pwd":pwddetails})
+    mvd = db.collection("tbl_complaint").where("mvd_id", "!=", "").where("complaint_status", "==", 0).stream()
+    for m in mvd:
+        mv = m.to_dict()
+        mvddetails = db.collection("tbl_mvd").document(mv["mvd_id"]).get().to_dict()
+        mvddata.append({"data":m.to_dict(),"id":m.id,"mvd":mvddetails})
+    kseb = db.collection("tbl_complaint").where("kseb_id", "!=", "").where("complaint_status", "==", 0).stream()
+    for k in kseb:
+        ks = k.to_dict()
+        ksebdetails = db.collection("tbl_kseb").document(ks["kseb_id"]).get().to_dict()
+        ksebdata.append({"data":k.to_dict(),"id":k.id,"kseb":ksebdetails})
+    municipality = db.collection("tbl_complaint").where("municipality_id", "!=", "").where("complaint_status", "==", 0).stream()
+    for m in municipality:
+        mu = m.to_dict()
+        municipalitydetails = db.collection("tbl_municipality").document(mu["municipality_id"]).get().to_dict()
+        municipalitydata.append({"data":m.to_dict(),"id":m.id,"municipality":municipalitydetails})
+    return render(request,"Admin/View_Complaint.html",{"user":userdata,"pwd":pwddata,"kseb":ksebdata,"municipality":municipalitydata,"mvd":mvddata})
+
+# Reply
+def reply(request, id):
+    if request.method == "POST":
+        db.collection("tbl_complaint").document(id).update({"complaint_reply":request.POST.get("txt_reply"),"complaint_status":1})
+        return render(request,"Admin/Reply.html",{"msg":"Reply Sended Successfully"})
+    else:
+        return render(request,"Admin/Reply.html")
+
+# Replyed Complaint
+def replyedcomplaint(request):
+    userdata = []
+    pwddata = []
+    ksebdata = []
+    municipalitydata = []
+    mvddata = []
+    user = db.collection("tbl_complaint").where("user_id", "!=", "").where("complaint_status", "==", 1).stream()
+    for u in user:
+        us = u.to_dict()
+        userdetails = db.collection("tbl_user").document(us["user_id"]).get().to_dict()
+        userdata.append({"data":u.to_dict(),"id":u.id,"user":userdetails})
+    pwd = db.collection("tbl_complaint").where("pwd_id", "!=", "").where("complaint_status", "==", 1).stream()
+    for p in pwd:
+        pw = p.to_dict()
+        pwddetails = db.collection("tbl_pwd").document(pw["pwd_id"]).get().to_dict()
+        pwddata.append({"data":p.to_dict(),"id":p.id,"pwd":pwddetails})
+    mvd = db.collection("tbl_complaint").where("mvd_id", "!=", "").where("complaint_status", "==", 1).stream()
+    for m in mvd:
+        mv = m.to_dict()
+        mvddetails = db.collection("tbl_mvd").document(mv["mvd_id"]).get().to_dict()
+        mvddata.append({"data":m.to_dict(),"id":m.id,"mvd":mvddetails})
+    kseb = db.collection("tbl_complaint").where("kseb_id", "!=", "").where("complaint_status", "==", 1).stream()
+    for k in kseb:
+        ks = k.to_dict()
+        ksebdetails = db.collection("tbl_kseb").document(ks["kseb_id"]).get().to_dict()
+        ksebdata.append({"data":k.to_dict(),"id":k.id,"kseb":ksebdetails})
+    municipality = db.collection("tbl_complaint").where("municipality_id", "!=", "").where("complaint_status", "==", 1).stream()
+    for m in municipality:
+        mu = m.to_dict()
+        municipalitydetails = db.collection("tbl_municipality").document(mu["municipality_id"]).get().to_dict()
+        municipalitydata.append({"data":m.to_dict(),"id":m.id,"municipality":municipalitydetails})
+    return render(request,"Admin/Replyed_Complaint.html",{"user":userdata,"pwd":pwddata,"kseb":ksebdata,"municipality":municipalitydata,"mvd":mvddata})

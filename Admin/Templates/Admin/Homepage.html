@@ -22,6 +22,10 @@
     <br><a href="{% url 'Admin:newpwd' %}">New pwd</a>
     <br><a href="{% url 'Admin:approvedpwd' %}">Approved pwd</a>
     <br><a href="{% url 'Admin:rejectedpwd' %}">Rejected pwd</a>
+
+    <br><a href="{% url 'Admin:complaint' %}">View Complaint</a>
+    <br><a href="{% url 'Admin:replyedcomplaint' %}">Replyed Complaint</a>
+
     {% if msg %}
     <script>
         alert("{{msg}}")
