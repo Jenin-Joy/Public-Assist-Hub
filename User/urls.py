@@ -45,4 +45,13 @@ urlpatterns = [
     # Complaint
     path("complaint/", views.complaint, name="complaint"),
 
+    # Official Complaint Municipality
+    path("OfficalComplaintMunicipality/<str:id>", views.OfficalComplaintMunicipality, name="OfficalComplaintMunicipality"),
+
+    # Official Complaint Mvd
+    path("OfficalComplaintMvd/<str:id>", views.OfficalComplaintMvd, name="OfficalComplaintMvd"),
+
+    # View Offical Complaints
+    path("viewofficialcomplaints/", views.viewofficialcomplaints, name="viewofficialcomplaints"),
+
 ]

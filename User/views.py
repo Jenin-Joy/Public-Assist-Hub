@@ -290,3 +290,65 @@ def complaint(request):
         return render(request,"User/Complaint.html",{"msg":"Complaint Send Sucessfully"})
     else:
         return render(request,"User/Complaint.html",{"complaint":complaintdata})
+
+# Offical Complaint Municipality
+def OfficalComplaintMunicipality(request, id):
+    if request.method == "POST":
+        photo = request.FILES.get("txt_photo")
+        if photo:
+            path = "OfficialComplaint/" + photo.name
+            sd.child(path).put(photo)
+            download_url = sd.child(path).get_url(None)
+        db.collection("tbl_complaint").add({"complaint_title":request.POST.get("txt_title"),
+                                            "complaint_content":request.POST.get("txt_content"),
+                                            "complaint_photo":download_url,
+                                            "complaint_date":datetime.now(),
+                                            "complaint_status":0,
+                                            "complaint_reply":"",
+                                            "user_id":request.session["uid"],
+                                            "municipality_id":id,
+                                            "kseb_id":"",
+                                            "pwd_id":"",
+                                            "mvd_id":""})   
+        return render(request,"User/OfficialsComplaint.html",{"msg":"Complaint Send Sucessfully"})
+    else:
+        return render(request,"User/OfficialsComplaint.html",)
+
+# Offical Complaint MVD
+def OfficalComplaintMvd(request, id):
+    if request.method == "POST":
+        photo = request.FILES.get("txt_photo")
+        if photo:
+            path = "OfficialComplaint/" + photo.name
+            sd.child(path).put(photo)
+            download_url = sd.child(path).get_url(None)
+        db.collection("tbl_complaint").add({"complaint_title":request.POST.get("txt_title"),
+                                            "complaint_content":request.POST.get("txt_content"),
+                                            "complaint_photo":download_url,
+                                            "complaint_date":datetime.now(),
+                                            "complaint_status":0,
+                                            "complaint_reply":"",
+                                            "user_id":request.session["uid"],
+                                            "municipality_id":"",
+                                            "kseb_id":"",
+                                            "pwd_id":"",
+                                            "mvd_id":id})   
+        return render(request,"User/OfficialsComplaint.html",{"msg":"Complaint Send Sucessfully"})
+    else:
+        return render(request,"User/OfficialsComplaint.html",)
+
+# View Offical Complaint
+def viewofficialcomplaints(request):
+    municipality = db.collection("tbl_complaint").where("user_id", "==", request.session["uid"]).where("municipality_id", "!=", "").stream()
+    mvd = db.collection("tbl_complaint").where("user_id", "==", request.session["uid"]).where("mvd_id", "!=", "").stream()
+    munidata = []
+    mvddata = []
+    for i in municipality:
+        com = i.to_dict()
+        muni = db.collection("tbl_municipality").document(com["municipality_id"]).get().to_dict()
+        munidata.append({"data":com, "id":i.id, "municipality":muni})
+    for i in mvd:
+        com = i.to_dict()
+        mv = db.collection("tbl_mvd").document(com["mvd_id"]).get().to_dict()
+        mvddata.append({"data":com, "id":i.id, "mvd":mv})
+    return render(request,"User/ViewOfficalComplaint.html",{"mvdcomplaint":mvddata,"municipalitycomplaint":munidata})

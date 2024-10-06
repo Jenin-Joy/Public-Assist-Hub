@@ -43,5 +43,11 @@
         window.location = "{% url 'MVD:viewrequest' %}"
     </script>
     {% endif %}
+    {% if msg1 %}
+    <script>
+        alert('{{msg1}}')
+        window.location = "{% url 'MVD:viewcomplaint' %}"
+    </script>
+    {% endif %}
 </body>
 </html>

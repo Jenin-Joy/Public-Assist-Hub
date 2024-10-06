@@ -5,7 +5,7 @@
         <div>Contact : {{i.data.municipality_contact}}</div>
         <div>Email : {{i.data.municipality_email}}</div>
         <div>Address : {{i.data.municipality_address}}</div>
-        <div><a href="{% url 'User:municipalityrequest' i.id %}">Request</a></div>
+        <div><a href="{% url 'User:municipalityrequest' i.id %}">Request</a> | <a href="{% url 'User:OfficalComplaintMunicipality' i.id %}">Complaint</a></div>
     </div>
     {% endfor %}
 </div>

@@ -11,6 +11,8 @@
     <br><a href="{% url 'Municipality:viewrequest' %}">Request</a>
     <br><a href="{% url 'Municipality:replyedrequest' %}">Replyed Request</a>
     <br><a href="{% url 'Municipality:complaint' %}">Complaint</a>
+    <br><a href="{% url 'Municipality:viewcomplaint' %}">View Complaint</a>
+    <br><a href="{% url 'Municipality:replyedcomplaint' %}">Replyed Complaint</a>
     {% if msg1 %}
     <script>
         alert('Password Reset Link is sented to {{msg1}} email');

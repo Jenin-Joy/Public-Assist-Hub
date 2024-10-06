@@ -98,3 +98,31 @@ def complaint(request):
         return render(request,"Municipality/Complaint.html",{"msg":"Complaint Send Sucessfully"})
     else:
         return render(request,"Municipality/Complaint.html",{"complaint":complaintdata})
+
+# View Complaint
+def viewcomplaint(request):
+    user = db.collection("tbl_complaint").where("user_id", "!=", "").where("municipality_id", "==", request.session["mid"]).where("complaint_status", "==", 0).stream()
+    userdata = []
+    for i in user:
+        com = i.to_dict()
+        u = db.collection("tbl_user").document(com["user_id"]).get().to_dict()
+        userdata.append({"data":com, "id":i.id, "user":u})
+    return render(request,"Municipality/ViewComplaint.html",{"complaint":userdata})
+
+# Reply To Complaint
+def replytocomplaint(request, id):
+    if request.method == "POST":
+        com = db.collection("tbl_complaint").document(id).update({"complaint_reply":request.POST.get("txt_reply"),"complaint_status":1})
+        return render(request,"Municipality/Reply.html",{"msg1":"Reply Send Successfully"})
+    else:
+        return render(request,"Municipality/Reply.html")
+
+# Replyed Complaint
+def replyedcomplaint(request):
+    user = db.collection("tbl_complaint").where("user_id", "!=", "").where("municipality_id", "==", request.session["mid"]).where("complaint_status", "==", 1).stream()
+    userdata = []
+    for i in user:
+        com = i.to_dict()
+        u = db.collection("tbl_user").document(com["user_id"]).get().to_dict()
+        userdata.append({"data":com, "id":i.id, "user":u})
+    return render(request,"Municipality/ReplyedComplaint.html",{"complaint":userdata})

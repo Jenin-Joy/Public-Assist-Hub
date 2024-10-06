@@ -98,3 +98,31 @@ def complaint(request):
         return render(request,"MVD/Complaint.html",{"msg":"Complaint Send Sucessfully"})
     else:
         return render(request,"MVD/Complaint.html",{"complaint":complaintdata})
+
+# View Complaint
+def viewcomplaint(request):
+    user = db.collection("tbl_complaint").where("user_id", "!=", "").where("mvd_id", "==", request.session["mvdid"]).where("complaint_status", "==", 0).stream()
+    userdata = []
+    for i in user:
+        com = i.to_dict()
+        u = db.collection("tbl_user").document(com["user_id"]).get().to_dict()
+        userdata.append({"data":com, "id":i.id, "user":u})
+    return render(request,"MVD/ViewComplaint.html",{"complaint":userdata})
+
+# Reply To Complaint
+def replytocomplaint(request, id):
+    if request.method == "POST":
+        com = db.collection("tbl_complaint").document(id).update({"complaint_reply":request.POST.get("txt_reply"),"complaint_status":1})
+        return render(request,"MVD/Reply.html",{"msg1":"Reply Send Successfully"})
+    else:
+        return render(request,"MVD/Reply.html")
+
+# Replyed Complaint
+def replyedcomplaint(request):
+    user = db.collection("tbl_complaint").where("user_id", "!=", "").where("mvd_id", "==", request.session["mvdid"]).where("complaint_status", "==", 1).stream()
+    userdata = []
+    for i in user:
+        com = i.to_dict()
+        u = db.collection("tbl_user").document(com["user_id"]).get().to_dict()
+        userdata.append({"data":com, "id":i.id, "user":u})
+    return render(request,"MVD/ReplyedComplaint.html",{"complaint":userdata})

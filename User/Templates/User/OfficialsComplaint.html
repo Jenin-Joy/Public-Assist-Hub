@@ -17,7 +17,7 @@
         tr:hover {
             background-color: rgb(225, 225, 225);
         }
-        input[type="submit"], textarea {
+        input[type="submit"], textarea, [type="text"] {
             border-radius: 10px;
             padding: 10px;
             border: 1px solid gray;
@@ -25,12 +25,20 @@
     </style>
 </head>
 <body>
-    <form action="" method="post">
+    <form action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <table cellpadding="10" align="center">
             <tr>
-                <td>Reply</td>
-                <td><textarea name="txt_reply" id="" rows="7" cols="30"></textarea></td>
+                <td>Title</td>
+                <td><input type="text" name="txt_title" id=""></td>
+            </tr>
+            <tr>
+                <td>Content</td>
+                <td><textarea name="txt_content" id="" cols="20" rows="5"></textarea></td>
+            </tr>
+            <tr>
+                <td>Photo</td>
+                <td><input type="file" name="txt_photo" id=""></td>
             </tr>
             <tr>
                 <td colspan="2" align="center"><input type="submit" value="Send"></td>
@@ -40,13 +48,7 @@
     {% if msg %}
     <script>
         alert('{{msg}}')
-        window.location = "{% url 'Municipality:viewrequest' %}"
-    </script>
-    {% endif %}
-    {% if msg1 %}
-    <script>
-        alert('{{msg1}}')
-        window.location = "{% url 'Municipality:viewcomplaint' %}"
+        window.location = "{% url 'User:viewofficialcomplaints' %}"
     </script>
     {% endif %}
 </body>

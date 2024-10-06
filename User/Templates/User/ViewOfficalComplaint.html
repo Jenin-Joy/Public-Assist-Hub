@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        h3{
+            margin-top: 100px;
+        }
+        table {
+            /* margin-top: 100px; */
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgb(221, 221, 221);
+            border-radius: 10px;
+        }
+        tr:nth-child(even) {
+            background-color: rgb(242, 242, 242);
+        }
+        tr:hover {
+            background-color: rgb(225, 225, 225);
+        }
+        input[type="submit"], textarea, [type="text"] {
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid gray;
+        }
+    </style>
+</head>
+<body>
+    <h3 align="center">Complaint To Municipality</h3>
+    <table cellpadding="10" align="center">
+        <tr>
+            <td>#</td>
+            <td>Title</td>
+            <td>Content</td>
+            <td>Municipality</td>
+            <td>Date</td>
+            <td>File</td>
+            <td>Reply</td>
+        </tr>
+        {% for i in municipalitycomplaint %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{i.data.complaint_title}}</td>
+            <td>{{i.data.complaint_content}}</td>
+            <td>{{i.municipality.municipality_name}}</td>
+            <td>{{i.data.complaint_date|date}}</td>
+            <td><a href="{{i.data.complaint_photo}}"><img src="{{i.data.complaint_photo}}" width="60" alt=""></a></td>
+            <td>
+                {% if i.data.complaint_status == 0 %}
+                <span>Not Replyed</span>
+                {% else %}
+                {{i.data.complaint_reply}}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3 align="center">Complaint To MVD</h3>
+    <table cellpadding="10" align="center">
+        <tr>
+            <td>#</td>
+            <td>Title</td>
+            <td>Content</td>
+            <td>MVD</td>
+            <td>Date</td>
+            <td>File</td>
+            <td>Reply</td>
+        </tr>
+        {% for i in mvdcomplaint %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{i.data.complaint_title}}</td>
+            <td>{{i.data.complaint_content}}</td>
+            <td>{{i.mvd.mvd_name}}</td>
+            <td>{{i.data.complaint_date|date}}</td>
+            <td><a href="{{i.data.complaint_photo}}"><img src="{{i.data.complaint_photo}}" width="60" alt=""></a></td>
+            <td>
+                {% if i.data.complaint_status == 0 %}
+                <span>Not Replyed</span>
+                {% else %}
+                {{i.data.complaint_reply}}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
