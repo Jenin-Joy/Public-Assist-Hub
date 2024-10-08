@@ -23,4 +23,7 @@ urlpatterns = [
     path("viewcomplaint/", views.viewcomplaint, name="viewcomplaint"),
     path("replytocomplaint/<str:id>", views.replytocomplaint, name="replytocomplaint"),
     path("replyedcomplaint/", views.replyedcomplaint, name="replyedcomplaint"),
+
+    #FeedBack
+    path("feedback/", views.feedback, name="feedback"),
 ]

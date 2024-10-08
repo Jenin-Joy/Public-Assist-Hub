@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        table {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgb(221, 221, 221);
+            border-radius: 10px;
+        }
+        tr:nth-child(even) {
+            background-color: rgb(242, 242, 242);
+        }
+        tr:hover {
+            background-color: rgb(225, 225, 225);
+        }
+        .head {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            font-size: 20px;
+        }
+        .heading {
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgb(221, 221, 221);
+        }
+        .content-section{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="head">
+        <div class="heading" onclick="showContent('mvd')">MVD</div>
+        <div class="heading" onclick="showContent('pwd')">PWD</div>
+        <div class="heading" onclick="showContent('kseb')">KSEB</div>
+        <div class="heading" onclick="showContent('municipality')">MUNICIPALITY</div>
+        <div class="heading" onclick="showContent('user')">USER</div>
+    </div>
+    <div id="pwd" class="content-section">
+        <table cellpadding="10" align="center">
+            <tr>
+                <th colspan="6">PWD FeedBack</th>
+            </tr>
+            <tr>
+                <td>#</td>
+                <td>FeedBack</td>
+                <td>Date</td>
+                <td>PWD</td>
+            </tr>
+            {% for i in pwd %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{i.data.feedback_content}}</td>
+                <td>{{i.data.feedback_date|date}}</td>
+                <td>{{i.pwd.pwd_name}}</td>
+            {% endfor %}
+        </table>
+    </div>
+    <div id="mvd" class="content-section">
+        <table cellpadding="10" align="center">
+            <tr>
+                <th colspan="6">MVD FeedBack</th>
+            </tr>
+            <tr>
+                <td>#</td>
+                <td>FeedBack</td>
+                <td>Date</td>
+                <td>MVD</td>
+            </tr>
+            {% for i in mvd %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{i.data.feedback_content}}</td>
+                <td>{{i.data.feedback_date|date}}</td>
+                <td>{{i.mvd.mvd_name}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div id="kseb" class="content-section">
+        <table cellpadding="10" align="center">
+            <tr>
+                <th colspan="6">KSEB FeedBack</th>
+            </tr>
+            <tr>
+                <td>#</td>
+                <td>FeedBack</td>
+                <td>Date</td>
+                <td>KSEB</td>
+            </tr>
+            {% for i in kseb %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{i.data.feedback_content}}</td>
+                <td>{{i.data.feedback_date|date}}</td>
+                <td>{{i.kseb.kseb_name}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div id="municipality" class="content-section">
+        <table cellpadding="10" align="center">
+            <tr>
+                <th colspan="6">Municipality FeedBack</th>
+            </tr>
+            <tr>
+                <td>#</td>
+                <td>FeedBack</td>
+                <td>Date</td>
+                <td>Municipality</td>
+            </tr>
+            {% for i in municipality %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{i.data.feedback_content}}</td>
+                <td>{{i.data.feedback_date|date}}</td>
+                <td>{{i.municipality.municipality_name}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div id="user" class="content-section">
+        <table cellpadding="10" align="center">
+            <tr>
+                <th colspan="6">User FeedBack</th>
+            </tr>
+            <tr>
+                <td>#</td>
+                <td>FeedBack</td>
+                <td>Date</td>
+                <td>User</td>
+            </tr>
+            {% for i in user %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{i.data.feedback_content}}</td>
+                <td>{{i.data.feedback_date|date}}</td>
+                <td>{{i.user.user_name}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>
+<script>
+    // Function to display the selected content and hide others
+    function showContent(contentId) {
+      // Hide all content sections
+      var contents = document.querySelectorAll('.content-section');
+      contents.forEach(function (section) {
+        section.style.display = 'none';
+      });
+      
+      // Show the selected content section
+      document.getElementById(contentId).style.display = 'block';
+    }
+  </script>

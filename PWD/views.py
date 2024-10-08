@@ -98,3 +98,17 @@ def complaint(request):
         return render(request,"PWD/Complaint.html",{"msg":"Complaint Send Sucessfully"})
     else:
         return render(request,"PWD/Complaint.html",{"complaint":complaintdata})
+
+# FeedBack
+def feedback(request):
+    if request.method == "POST":
+        db.collection("tbl_feedback").add({"feedback_content":request.POST.get("txt_feedback"),
+                                             "feedback_date":datetime.now(),
+                                             "user_id":"",
+                                             "mvd_id":"",
+                                             "kseb_id":"",
+                                             "municipality_id":"",
+                                             "pwd_id":request.session["pwdid"]})
+        return render(request,"PWD/FeedBack.html",{"msg":"Feedback Send Sucessfully"})
+    else:
+        return render(request,"PWD/FeedBack.html",)

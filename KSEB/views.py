@@ -98,3 +98,17 @@ def complaint(request):
         return render(request,"KSEB/Complaint.html",{"msg":"Complaint Send Sucessfully"})
     else:
         return render(request,"KSEB/Complaint.html",{"complaint":complaintdata})
+
+# FeedBack
+def feedback(request):
+    if request.method == "POST":
+        db.collection("tbl_feedback").add({"feedback_content":request.POST.get("txt_feedback"),
+                                             "feedback_date":datetime.now(),
+                                             "user_id":"",
+                                             "mvd_id":"",
+                                             "kseb_id":request.session["ksebid"],
+                                             "municipality_id":"",
+                                             "pwd_id":""})
+        return render(request,"KSEB/FeedBack.html",{"msg":"Feedback Send Sucessfully"})
+    else:
+        return render(request,"KSEB/FeedBack.html",)

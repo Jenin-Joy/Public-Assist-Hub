@@ -18,4 +18,7 @@ urlpatterns = [
 
     # Complaint
     path("complaint/", views.complaint, name="complaint"),
+
+    #FeedBack
+    path("feedback/", views.feedback, name="feedback"),
 ]

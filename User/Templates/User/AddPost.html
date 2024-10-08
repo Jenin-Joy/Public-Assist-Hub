@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        table {
+            margin-top: 100px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgb(221, 221, 221);
+            border-radius: 10px;
+        }
+        tr:nth-child(even) {
+            background-color: rgb(242, 242, 242);
+        }
+        tr:hover {
+            background-color: rgb(225, 225, 225);
+        }
+        input[type="submit"], textarea, [type="text"] {
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid gray;
+        }
+        .card{
+            padding: 23px;
+            box-shadow: 0 0 10px #d5d5d5;
+            border-radius: 19px;
+            width: fit-content;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .main {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+        }
+        i{
+            color:black;
+            font-size: 20px;
+            transition-delay: 0.1s;
+        }
+        i:hover{
+            color:red;
+        }
+    </style>
+</head>
+<body>
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table cellpadding="10" align="center">
+            <tr>
+                <td>Photo</td>
+                <td><input type="file" name="txt_photo" id=""></td>
+            </tr>
+            <tr>
+                <td>Caption</td>
+                <td><input type="text" name="txt_caption" id=""></td>
+            </tr>
+            <tr>
+                <td>Description</td>
+                <td><textarea name="txt_description" id="" cols="20" rows="5"></textarea></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"><input type="submit" value="Add"></td>
+            </tr>
+        </table>
+    </form>
+    {% if msg %}
+    <script>
+        alert("{{msg}}")
+        window.location = "{% url 'User:addpost' %}"
+    </script>
+    {% endif %}
+    <div class="main">
+        {% for i in post %}
+        <div class="card">
+            <div><img src="{{i.data.post_photo}}" width="150" height="170px" alt=""></div>
+            <div>Caption :{{i.data.post_caption}}</div>
+            <div>Description :{{i.data.post_description}}</div>
+            <div>Date :{{i.data.post_date|date}}</div>
+            <div><a href="{% url 'User:deletepost' i.id %}"><i class="fa-solid fa-trash"></i></a></div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

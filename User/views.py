@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib import messages
 from datetime import datetime
+from django.http import JsonResponse
 # Create your views here.
 
 # Data Base connection
@@ -40,7 +41,24 @@ def getData(data):
 
 # Home Page Function
 def homepage(request):
-    return render(request, 'User/Homepage.html')
+    post = db.collection("tbl_post").stream()
+    post_data = []
+    for i in post:
+        likescount = db.collection("tbl_like").where("post_id", "==", i.id).get()
+        data_list_count = len(likescount)
+        # print(data_list_count)
+        ps = i.to_dict()
+        pro = db.collection("tbl_user").document(ps["user_id"]).get().to_dict()
+        likes = db.collection("tbl_like").where("post_id", "==", i.id).where("user_id", "==", request.session["uid"]).get()
+        data_list = len(likes)
+        # cc = 0
+        # print(data_list)
+        if data_list > 0:
+            # cc = cc + 1
+            post_data.append({"post":i.to_dict(),"id":i.id,"user":pro,"condition":1,"count":data_list_count})
+        else:
+            post_data.append({"post":i.to_dict(),"id":i.id,"user":pro,"condition":0,"count":data_list_count})
+    return render(request, 'User/Homepage.html',{"post":post_data})
 
 # profile
 def profile(request):
@@ -352,3 +370,81 @@ def viewofficialcomplaints(request):
         mv = db.collection("tbl_mvd").document(com["mvd_id"]).get().to_dict()
         mvddata.append({"data":com, "id":i.id, "mvd":mv})
     return render(request,"User/ViewOfficalComplaint.html",{"mvdcomplaint":mvddata,"municipalitycomplaint":munidata})
+
+# Add Post
+def addpost(request):
+    posts = db.collection("tbl_post").where("user_id", "==", request.session["uid"]).stream()
+    postdata = getData(posts)
+    if request.method == "POST":
+        photo = request.FILES.get("txt_photo")
+        if photo:
+            path = "Post/" + photo.name
+            sd.child(path).put(photo)
+            download_url = sd.child(path).get_url(None)
+        db.collection("tbl_post").add({"post_caption":request.POST.get("txt_caption"),
+                                        "post_description":request.POST.get("txt_description"),
+                                        "post_photo":download_url,
+                                        "post_date":datetime.now(),
+                                        "user_id":request.session["uid"]})
+        return render(request,"User/AddPost.html",{"msg":"Post Added Sucessfully"})
+    else:
+        return render(request,"User/AddPost.html",{"post":postdata})
+
+# Delete Post
+def deletepost(request, id):
+    db.collection("tbl_post").document(id).delete()
+    return render(request,"User/AddPost.html",{"msg":"Post Deleted"})
+
+# View Post
+def ajaxlike(request):
+    count = db.collection("tbl_like").where("user_id", "==", request.session["uid"]).where("post_id", "==", request.GET.get("postid")).stream()
+    ct = 0
+    for c in count:
+        ct = ct + 1
+        id = c.id
+    # print(ct)
+    if ct > 0:
+        db.collection("tbl_like").document(id).delete()
+        likescount = db.collection("tbl_like").where("post_id", "==", request.GET.get("postid")).get()
+        data_list_count = len(likescount)
+        # print(data_list_count)
+        return JsonResponse({"color":1,"count":data_list_count})
+    else:
+        db.collection("tbl_like").add({"user_id":request.session["uid"],"post_id":request.GET.get("postid")})
+        likescount = db.collection("tbl_like").where("post_id", "==", request.GET.get("postid")).get()
+        data_list_count = len(likescount)
+        # print(data_list_count)
+        return JsonResponse({"color":0,"count":data_list_count})
+
+def ajaxcomment(request):
+    db.collection("tbl_comment").add({"post_id":request.GET.get("postid"),"user_id":request.session["uid"],"command_content":request.GET.get("content")})
+    comment = db.collection("tbl_comment").where("post_id", "==", request.GET.get("postid")).stream()
+    com_data = []
+    for c in comment:
+        cm = c.to_dict()
+        user = db.collection("tbl_user").document(cm["user_id"]).get().to_dict()
+        com_data.append({"comment":c.to_dict(),"id":c.id,"user":user})
+    return render(request,"User/AjaxComment.html",{"comment":com_data})
+
+def ajaxgetcommant(request):
+    comment = db.collection("tbl_comment").where("post_id", "==",request.GET.get("postid")).stream()
+    com_data = []
+    for c in comment:
+        cm = c.to_dict()
+        user = db.collection("tbl_user").document(cm["user_id"]).get().to_dict()
+        com_data.append({"comment":c.to_dict(),"id":c.id,"user":user})
+    return render(request,"User/AjaxComment.html",{"comment":com_data})
+
+# FeedBack
+def feedback(request):
+    if request.method == "POST":
+        db.collection("tbl_feedback").add({"feedback_content":request.POST.get("txt_feedback"),
+                                             "feedback_date":datetime.now(),
+                                             "user_id":request.session["uid"],
+                                             "mvd_id":"",
+                                             "kseb_id":"",
+                                             "municipality_id":"",
+                                             "pwd_id":""})
+        return render(request,"User/FeedBack.html",{"msg":"Feedback Send Sucessfully"})
+    else:
+        return render(request,"User/FeedBack.html",)

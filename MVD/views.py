@@ -126,3 +126,17 @@ def replyedcomplaint(request):
         u = db.collection("tbl_user").document(com["user_id"]).get().to_dict()
         userdata.append({"data":com, "id":i.id, "user":u})
     return render(request,"MVD/ReplyedComplaint.html",{"complaint":userdata})
+
+# FeedBack
+def feedback(request):
+    if request.method == "POST":
+        db.collection("tbl_feedback").add({"feedback_content":request.POST.get("txt_feedback"),
+                                             "feedback_date":datetime.now(),
+                                             "user_id":"",
+                                             "mvd_id":request.session["mvdid"],
+                                             "kseb_id":"",
+                                             "municipality_id":"",
+                                             "pwd_id":""})
+        return render(request,"MVD/FeedBack.html",{"msg":"Feedback Send Sucessfully"})
+    else:
+        return render(request,"MVD/FeedBack.html",)

@@ -54,4 +54,16 @@ urlpatterns = [
     # View Offical Complaints
     path("viewofficialcomplaints/", views.viewofficialcomplaints, name="viewofficialcomplaints"),
 
+    # Add Post
+    path("addpost/", views.addpost, name="addpost"),
+    path("deletepost/<str:id>", views.deletepost, name="deletepost"),
+
+    # View Post
+    path('ajaxlike/',views.ajaxlike,name="ajaxlike"),
+    path('ajaxcomment/',views.ajaxcomment,name="ajaxcomment"),
+    path('ajaxgetcommant/',views.ajaxgetcommant,name="ajaxgetcommant"),
+
+    #FeedBack
+    path("feedback/", views.feedback, name="feedback"),
+
 ]

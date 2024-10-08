@@ -365,3 +365,37 @@ def replyedcomplaint(request):
         municipalitydetails = db.collection("tbl_municipality").document(mu["municipality_id"]).get().to_dict()
         municipalitydata.append({"data":m.to_dict(),"id":m.id,"municipality":municipalitydetails})
     return render(request,"Admin/Replyed_Complaint.html",{"user":userdata,"pwd":pwddata,"kseb":ksebdata,"municipality":municipalitydata,"mvd":mvddata})
+
+# FeedBack
+def viewfeedback(request):
+    userdata = []
+    pwddata = []
+    ksebdata = []
+    municipalitydata = []
+    mvddata = []
+    user = db.collection("tbl_feedback").where("user_id", "!=", "").stream()
+    for u in user:
+        us = u.to_dict()
+        userdetails = db.collection("tbl_user").document(us["user_id"]).get().to_dict()
+        userdata.append({"data":u.to_dict(),"id":u.id,"user":userdetails})
+    pwd = db.collection("tbl_feedback").where("pwd_id", "!=", "").stream()
+    for p in pwd:
+        pw = p.to_dict()
+        pwddetails = db.collection("tbl_pwd").document(pw["pwd_id"]).get().to_dict()
+        pwddata.append({"data":p.to_dict(),"id":p.id,"pwd":pwddetails})
+    mvd = db.collection("tbl_feedback").where("mvd_id", "!=", "").stream()
+    for m in mvd:
+        mv = m.to_dict()
+        mvddetails = db.collection("tbl_mvd").document(mv["mvd_id"]).get().to_dict()
+        mvddata.append({"data":m.to_dict(),"id":m.id,"mvd":mvddetails})
+    kseb = db.collection("tbl_feedback").where("kseb_id", "!=", "").stream()
+    for k in kseb:
+        ks = k.to_dict()
+        ksebdetails = db.collection("tbl_kseb").document(ks["kseb_id"]).get().to_dict()
+        ksebdata.append({"data":k.to_dict(),"id":k.id,"kseb":ksebdetails})
+    municipality = db.collection("tbl_feedback").where("municipality_id", "!=", "").stream()
+    for m in municipality:
+        mu = m.to_dict()
+        municipalitydetails = db.collection("tbl_municipality").document(mu["municipality_id"]).get().to_dict()
+        municipalitydata.append({"data":m.to_dict(),"id":m.id,"municipality":municipalitydetails})
+    return render(request,"Admin/ViewFeedback.html",{"user":userdata,"pwd":pwddata,"kseb":ksebdata,"municipality":municipalitydata,"mvd":mvddata})
