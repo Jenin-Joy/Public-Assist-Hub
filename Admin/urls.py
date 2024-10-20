@@ -56,4 +56,7 @@ urlpatterns = [
     # FeedBack
     path('viewfeedback/',views.viewfeedback,name="viewfeedback"),
 
+    #Logout
+    path("logout/", views.logout, name="logout"),
+
 ]

@@ -1,9 +1,31 @@
+{% extends 'PWD/Head.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        table {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgb(221, 221, 221);
+            border-radius: 10px;
+            width: 300px;
+        }
+        tr:nth-child(even) {
+            background-color: rgb(242, 242, 242);
+        }
+        tr:hover {
+            background-color: rgb(225, 225, 225);
+        }
+        input[type="submit"],[type="text"], textarea {
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid gray;
+        }
+    </style>
 </head>
 <body>
     <form action="" method="post">
@@ -11,15 +33,15 @@
         <table cellpadding="10">
             <tr>
                 <td>Name</td>
-                <td><input type="text" name="txt_name" value="{{pwd.pwd_name}}" id=""></td>
+                <td><input type="text" name="txt_name" value="{{pwd.pwd_name}}" title="Name Allows Only Alphabets,Spaces and First Letter Must Be Capital Letter" pattern="^[A-Z]+[a-zA-Z ]*$" required id=""></td>
             </tr>
             <tr>
                 <td>Contact</td>
-                <td><input type="text" name="txt_contact" value="{{pwd.pwd_contact}}" id=""></td>
+                <td><input type="text" name="txt_contact" value="{{pwd.pwd_contact}}" pattern="[7-9]{1}[0-9]{9}" required title="Phone number with 7-9 and remaing 9 digit with 0-9" id=""></td>
             </tr>
             <tr>
                 <td>Address</td>
-                <td width="100"><textarea name="txt_address" id="" cols="20" rows="5">{{pwd.pwd_address}}</textarea></td>
+                <td width="100"><textarea name="txt_address" id="" cols="20" required rows="5">{{pwd.pwd_address}}</textarea></td>
             </tr>
             <tr>
                 <td colspan="2" align="center"><input type="submit" value="Update"></td>
@@ -28,3 +50,4 @@
     </form>
 </body>
 </html>
+{% endblock content %}

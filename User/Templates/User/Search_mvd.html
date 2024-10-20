@@ -1,3 +1,5 @@
+{% extends 'User/Head.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -77,13 +79,36 @@
         .loader-div {
             width: -webkit-fill-available;
             background-color: #ff9999b3;
-            height: 100vh;
+            height: 86vh;
             margin-left: -8px;
             margin-top: -8px;
             display: none;
             align-items: center;
             justify-content: center;
             position: absolute;
+            z-index: 1;
+        }
+        select {
+            border-radius: 10px;
+            padding: 10px;
+            border: 1px solid gray;
+        }
+        .card{
+            padding: 23px;
+            box-shadow: 0 0 10px #d5d5d5;
+            border-radius: 19px;
+            width: fit-content;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .main {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
         }
     </style>
 </head>
@@ -120,3 +145,4 @@
         });
     }
 </script>
+{% endblock content %}

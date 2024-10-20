@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 import firebase_admin
 from firebase_admin import firestore
 import pyrebase
@@ -20,66 +20,81 @@ def getData(data):
 
 # Homepage
 def homepage(request):
-    post = db.collection("tbl_post").stream()
-    post_data = []
-    for i in post:
-        likescount = db.collection("tbl_like").where("post_id", "==", i.id).get()
-        data_list_count = len(likescount)
-        # print(data_list_count)
-        ps = i.to_dict()
-        pro = db.collection("tbl_user").document(ps["user_id"]).get().to_dict()
-        likes = db.collection("tbl_like").where("post_id", "==", i.id).where("mvd_id", "==", request.session["mvdid"]).get()
-        data_list = len(likes)
-        # cc = 0
-        # print(data_list)
-        if data_list > 0:
-            # cc = cc + 1
-            post_data.append({"post":i.to_dict(),"id":i.id,"user":pro,"condition":1,"count":data_list_count})
-        else:
-            post_data.append({"post":i.to_dict(),"id":i.id,"user":pro,"condition":0,"count":data_list_count})
-    return render(request, 'MVD/Homepage.html',{"post":post_data})
+    if "mvdid" in request.session:
+        post = db.collection("tbl_post").stream()
+        post_data = []
+        for i in post:
+            likescount = db.collection("tbl_like").where("post_id", "==", i.id).get()
+            data_list_count = len(likescount)
+            # print(data_list_count)
+            ps = i.to_dict()
+            pro = db.collection("tbl_user").document(ps["user_id"]).get().to_dict()
+            likes = db.collection("tbl_like").where("post_id", "==", i.id).where("mvd_id", "==", request.session["mvdid"]).get()
+            data_list = len(likes)
+            # cc = 0
+            # print(data_list)
+            if data_list > 0:
+                # cc = cc + 1
+                post_data.append({"post":i.to_dict(),"id":i.id,"user":pro,"condition":1,"count":data_list_count})
+            else:
+                post_data.append({"post":i.to_dict(),"id":i.id,"user":pro,"condition":0,"count":data_list_count})
+        return render(request, 'MVD/Homepage.html',{"post":post_data})
+    else:
+        return redirect("Guest:login")
 
 # profile
 def profile(request):
-    mvd = db.collection("tbl_mvd").document(request.session["mvdid"]).get().to_dict()
-    return render(request, 'mvd/MyProfile.html',{"mvd": mvd})
+    if "mvdid" in request.session:
+        mvd = db.collection("tbl_mvd").document(request.session["mvdid"]).get().to_dict()
+        return render(request, 'mvd/MyProfile.html',{"mvd": mvd})
+    else:
+        return redirect("Guest:login")
 
 # Edit profile
 def editprofile(request):
-    mvd = db.collection("tbl_mvd").document(request.session["mvdid"]).get().to_dict()
-    if request.method == "POST":
-        db.collection("tbl_mvd").document(request.session["mvdid"]).update({
-            "mvd_name": request.POST.get("txt_name"),
-            "mvd_contact": request.POST.get("txt_contact"),
-            "mvd_address": request.POST.get("txt_address"),
-        })
-        return render(request, 'mvd/MyProfile.html',{"msg": "Profile updated"})
+    if "mvdid" in request.session:
+        mvd = db.collection("tbl_mvd").document(request.session["mvdid"]).get().to_dict()
+        if request.method == "POST":
+            db.collection("tbl_mvd").document(request.session["mvdid"]).update({
+                "mvd_name": request.POST.get("txt_name"),
+                "mvd_contact": request.POST.get("txt_contact"),
+                "mvd_address": request.POST.get("txt_address"),
+            })
+            return render(request, 'mvd/MyProfile.html',{"msg": "Profile updated"})
+        else:
+            return render(request, 'mvd/EditProfile.html',{"mvd": mvd})
     else:
-        return render(request, 'mvd/EditProfile.html',{"mvd": mvd})
+        return redirect("Guest:login")
 
 # Change Password
 def changepassword(request):
-    mvd = db.collection("tbl_mvd").document(request.session["mvdid"]).get().to_dict()
-    email = mvd["mvd_email"]
-    # print(email)
-    em_link = firebase_admin.auth.generate_password_reset_link(email)
-    send_mail(
-        'Reset your password ', #subject
-        "\rHello \r\nFollow this link to reset your Public Assist Hub site password for your " + email + "\n" + em_link +".\n If you didn't ask to reset your password, you can ignore this email. \r\n Thanks. \r\n Your D MARKET team.",#body
-        settings.EMAIL_HOST_USER,
-        [email],
-    )
-    return render(request,"mvd/HomePage.html",{"msg1":email})
+    if "mvdid" in request.session:
+        mvd = db.collection("tbl_mvd").document(request.session["mvdid"]).get().to_dict()
+        email = mvd["mvd_email"]
+        # print(email)
+        em_link = firebase_admin.auth.generate_password_reset_link(email)
+        send_mail(
+            'Reset your password ', #subject
+            "\rHello \r\nFollow this link to reset your Public Assist Hub site password for your " + email + "\n" + em_link +".\n If you didn't ask to reset your password, you can ignore this email. \r\n Thanks. \r\n Your D MARKET team.",#body
+            settings.EMAIL_HOST_USER,
+            [email],
+        )
+        return render(request,"mvd/HomePage.html",{"msg1":email})
+    else:
+        return redirect("Guest:login")
 
 # Request
 def viewrequest(request):
-    requestdata = []
-    req = db.collection("tbl_request").where("mvd_id", "==", request.session["mvdid"]).where("request_status", "==", 0).stream()
-    for r in req:
-        req = r.to_dict()
-        user = db.collection("tbl_user").document(req["user_id"]).get().to_dict()
-        requestdata.append({"data":r.to_dict(),"id":r.id,"user":user})
-    return render(request,"MVD/View_Request.html",{"request":requestdata})
+    if "mvdid" in request.session:
+        requestdata = []
+        req = db.collection("tbl_request").where("mvd_id", "==", request.session["mvdid"]).where("request_status", "==", 0).stream()
+        for r in req:
+            req = r.to_dict()
+            user = db.collection("tbl_user").document(req["user_id"]).get().to_dict()
+            requestdata.append({"data":r.to_dict(),"id":r.id,"user":user})
+        return render(request,"MVD/View_Request.html",{"request":requestdata})
+    else:
+        return redirect("Guest:login")
 
 def reply(request, id):
     if request.method == "POST":
@@ -89,43 +104,52 @@ def reply(request, id):
         return render(request,"MVD/Reply.html")
 
 def replyedrequest(request):
-    requestdata = []
-    req = db.collection("tbl_request").where("mvd_id", "==", request.session["mvdid"]).where("request_status", "==", 1).stream()
-    for r in req:
-        req = r.to_dict()
-        user = db.collection("tbl_user").document(req["user_id"]).get().to_dict()
-        requestdata.append({"data":r.to_dict(),"id":r.id,"user":user})
-    return render(request,"MVD/Replyed_Request.html",{"request":requestdata})
+    if "mvdid" in request.session:
+        requestdata = []
+        req = db.collection("tbl_request").where("mvd_id", "==", request.session["mvdid"]).where("request_status", "==", 1).stream()
+        for r in req:
+            req = r.to_dict()
+            user = db.collection("tbl_user").document(req["user_id"]).get().to_dict()
+            requestdata.append({"data":r.to_dict(),"id":r.id,"user":user})
+        return render(request,"MVD/Replyed_Request.html",{"request":requestdata})
+    else:
+        return redirect("Guest:login")
 
 # Complaint
 def complaint(request):
-    complaint = db.collection("tbl_complaint").where("mvd_id", "==", request.session["mvdid"]).stream()
-    complaintdata = getData(complaint)
-    if request.method == "POST":
-        db.collection("tbl_complaint").add({"complaint_title":request.POST.get("txt_title"),
-                                            "complaint_content":request.POST.get("txt_content"),
-                                            "complaint_date":datetime.now(),
-                                            "complaint_reply":"",
-                                            "complaint_status":0,
-                                            "complaint_photo":"",
-                                            "user_id":"",
-                                            "municipality_id":"",
-                                            "kseb_id":"",
-                                            "pwd_id":"",
-                                            "mvd_id":request.session["mvdid"]})
-        return render(request,"MVD/Complaint.html",{"msg":"Complaint Send Sucessfully"})
+    if "mvdid" in request.session:
+        complaint = db.collection("tbl_complaint").where("mvd_id", "==", request.session["mvdid"]).stream()
+        complaintdata = getData(complaint)
+        if request.method == "POST":
+            db.collection("tbl_complaint").add({"complaint_title":request.POST.get("txt_title"),
+                                                "complaint_content":request.POST.get("txt_content"),
+                                                "complaint_date":datetime.now(),
+                                                "complaint_reply":"",
+                                                "complaint_status":0,
+                                                "complaint_photo":"",
+                                                "user_id":"",
+                                                "municipality_id":"",
+                                                "kseb_id":"",
+                                                "pwd_id":"",
+                                                "mvd_id":request.session["mvdid"]})
+            return render(request,"MVD/Complaint.html",{"msg":"Complaint Send Sucessfully"})
+        else:
+            return render(request,"MVD/Complaint.html",{"complaint":complaintdata})
     else:
-        return render(request,"MVD/Complaint.html",{"complaint":complaintdata})
+        return redirect("Guest:login")
 
 # View Complaint
 def viewcomplaint(request):
-    user = db.collection("tbl_complaint").where("user_id", "!=", "").where("mvd_id", "==", request.session["mvdid"]).where("complaint_status", "==", 0).stream()
-    userdata = []
-    for i in user:
-        com = i.to_dict()
-        u = db.collection("tbl_user").document(com["user_id"]).get().to_dict()
-        userdata.append({"data":com, "id":i.id, "user":u})
-    return render(request,"MVD/ViewComplaint.html",{"complaint":userdata})
+    if "mvdid" in request.session:
+        user = db.collection("tbl_complaint").where("user_id", "!=", "").where("mvd_id", "==", request.session["mvdid"]).where("complaint_status", "==", 0).stream()
+        userdata = []
+        for i in user:
+            com = i.to_dict()
+            u = db.collection("tbl_user").document(com["user_id"]).get().to_dict()
+            userdata.append({"data":com, "id":i.id, "user":u})
+        return render(request,"MVD/ViewComplaint.html",{"complaint":userdata})
+    else:
+        return redirect("Guest:login")
 
 # Reply To Complaint
 def replytocomplaint(request, id):
@@ -137,27 +161,33 @@ def replytocomplaint(request, id):
 
 # Replyed Complaint
 def replyedcomplaint(request):
-    user = db.collection("tbl_complaint").where("user_id", "!=", "").where("mvd_id", "==", request.session["mvdid"]).where("complaint_status", "==", 1).stream()
-    userdata = []
-    for i in user:
-        com = i.to_dict()
-        u = db.collection("tbl_user").document(com["user_id"]).get().to_dict()
-        userdata.append({"data":com, "id":i.id, "user":u})
-    return render(request,"MVD/ReplyedComplaint.html",{"complaint":userdata})
+    if "mvdid" in request.session:
+        user = db.collection("tbl_complaint").where("user_id", "!=", "").where("mvd_id", "==", request.session["mvdid"]).where("complaint_status", "==", 1).stream()
+        userdata = []
+        for i in user:
+            com = i.to_dict()
+            u = db.collection("tbl_user").document(com["user_id"]).get().to_dict()
+            userdata.append({"data":com, "id":i.id, "user":u})
+        return render(request,"MVD/ReplyedComplaint.html",{"complaint":userdata})
+    else:
+        return redirect("Guest:login")
 
 # FeedBack
 def feedback(request):
-    if request.method == "POST":
-        db.collection("tbl_feedback").add({"feedback_content":request.POST.get("txt_feedback"),
-                                             "feedback_date":datetime.now(),
-                                             "user_id":"",
-                                             "mvd_id":request.session["mvdid"],
-                                             "kseb_id":"",
-                                             "municipality_id":"",
-                                             "pwd_id":""})
-        return render(request,"MVD/FeedBack.html",{"msg":"Feedback Send Sucessfully"})
+    if "mvdid" in request.session:
+        if request.method == "POST":
+            db.collection("tbl_feedback").add({"feedback_content":request.POST.get("txt_feedback"),
+                                                "feedback_date":datetime.now(),
+                                                "user_id":"",
+                                                "mvd_id":request.session["mvdid"],
+                                                "kseb_id":"",
+                                                "municipality_id":"",
+                                                "pwd_id":""})
+            return render(request,"MVD/FeedBack.html",{"msg":"Feedback Send Sucessfully"})
+        else:
+            return render(request,"MVD/FeedBack.html",)
     else:
-        return render(request,"MVD/FeedBack.html",)
+        return redirect("Guest:login")
 
 # View Post
 def ajaxlike(request):
@@ -235,3 +265,8 @@ def ajaxgetcommant(request):
             municipality = db.collection("tbl_municipality").document(cm["municipality_id"]).get().to_dict()
             com_data.append({"comment":c.to_dict(),"id":c.id,"municipality":municipality,"photo":"0"})
     return render(request,"MVD/AjaxComment.html",{"comment":com_data})
+
+# Logout
+def logout(request):
+    del request.session["mvdid"]
+    return redirect("Guest:login")

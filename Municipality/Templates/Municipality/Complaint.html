@@ -1,3 +1,5 @@
+{% extends 'Municipality/Head.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,11 +32,11 @@
         <table cellpadding="10" align="center">
             <tr>
                 <td>Title</td>
-                <td><input type="text" name="txt_title" id=""></td>
+                <td><input type="text" required name="txt_title" id=""></td>
             </tr>
             <tr>
                 <td>Content</td>
-                <td><textarea name="txt_content" id="" cols="30" rows="7"></textarea></td>
+                <td><textarea name="txt_content" required id="" cols="30" rows="7"></textarea></td>
             </tr>
             <tr>
                 <td colspan="2" align="center"><input type="submit" value="Send"></td>
@@ -73,3 +75,4 @@
     </table>
 </body>
 </html>
+{% endblock content %}

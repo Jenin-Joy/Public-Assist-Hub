@@ -31,4 +31,7 @@ urlpatterns = [
     path('ajaxlike/',views.ajaxlike,name="ajaxlike"),
     path('ajaxcomment/',views.ajaxcomment,name="ajaxcomment"),
     path('ajaxgetcommant/',views.ajaxgetcommant,name="ajaxgetcommant"),
+
+    #Logout
+    path("logout/", views.logout, name="logout"),
 ]

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 import firebase_admin
 from firebase_admin import firestore
 import pyrebase
@@ -41,62 +41,77 @@ def getData(data):
 
 # Home Page Function
 def homepage(request):
-    post = db.collection("tbl_post").stream()
-    post_data = []
-    for i in post:
-        likescount = db.collection("tbl_like").where("post_id", "==", i.id).get()
-        data_list_count = len(likescount)
-        # print(data_list_count)
-        ps = i.to_dict()
-        pro = db.collection("tbl_user").document(ps["user_id"]).get().to_dict()
-        likes = db.collection("tbl_like").where("post_id", "==", i.id).where("user_id", "==", request.session["uid"]).get()
-        data_list = len(likes)
-        # cc = 0
-        # print(data_list)
-        if data_list > 0:
-            # cc = cc + 1
-            post_data.append({"post":i.to_dict(),"id":i.id,"user":pro,"condition":1,"count":data_list_count})
-        else:
-            post_data.append({"post":i.to_dict(),"id":i.id,"user":pro,"condition":0,"count":data_list_count})
-    return render(request, 'User/Homepage.html',{"post":post_data})
+    if "uid" in request.session:
+        post = db.collection("tbl_post").stream()
+        post_data = []
+        for i in post:
+            likescount = db.collection("tbl_like").where("post_id", "==", i.id).get()
+            data_list_count = len(likescount)
+            # print(data_list_count)
+            ps = i.to_dict()
+            pro = db.collection("tbl_user").document(ps["user_id"]).get().to_dict()
+            likes = db.collection("tbl_like").where("post_id", "==", i.id).where("user_id", "==", request.session["uid"]).get()
+            data_list = len(likes)
+            # cc = 0
+            # print(data_list)
+            if data_list > 0:
+                # cc = cc + 1
+                post_data.append({"post":i.to_dict(),"id":i.id,"user":pro,"condition":1,"count":data_list_count})
+            else:
+                post_data.append({"post":i.to_dict(),"id":i.id,"user":pro,"condition":0,"count":data_list_count})
+        return render(request, 'User/Homepage.html',{"post":post_data})
+    else:
+        return redirect("Guest:login")
 
 # profile
 def profile(request):
-    user = db.collection("tbl_user").document(request.session["uid"]).get().to_dict()
-    return render(request, 'User/MyProfile.html',{"user": user})
+    if "uid" in request.session:
+        user = db.collection("tbl_user").document(request.session["uid"]).get().to_dict()
+        return render(request, 'User/MyProfile.html',{"user": user})
+    else:
+        return redirect("Guest:login")
 
 # Edit profile
 def editprofile(request):
-    user = db.collection("tbl_user").document(request.session["uid"]).get().to_dict()
-    if request.method == "POST":
-        db.collection("tbl_user").document(request.session["uid"]).update({
-            "user_name": request.POST.get("txt_name"),
-            "user_contact": request.POST.get("txt_contact"),
-            "user_address": request.POST.get("txt_address"),
-        })
-        return render(request, 'User/MyProfile.html',{"msg": "Profile updated"})
+    if "uid" in request.session:
+        user = db.collection("tbl_user").document(request.session["uid"]).get().to_dict()
+        if request.method == "POST":
+            db.collection("tbl_user").document(request.session["uid"]).update({
+                "user_name": request.POST.get("txt_name"),
+                "user_contact": request.POST.get("txt_contact"),
+                "user_address": request.POST.get("txt_address"),
+            })
+            return render(request, 'User/MyProfile.html',{"msg": "Profile updated"})
+        else:
+            return render(request, 'User/EditProfile.html',{"user": user})
     else:
-        return render(request, 'User/EditProfile.html',{"user": user})
+        return redirect("Guest:login")
 
 # Change Password
 def changepassword(request):
-    user = db.collection("tbl_user").document(request.session["uid"]).get().to_dict()
-    email = user["user_email"]
-    # print(email)
-    em_link = firebase_admin.auth.generate_password_reset_link(email)
-    send_mail(
-        'Reset your password ', #subject
-        "\rHello \r\nFollow this link to reset your Public Assist Hub site password for your " + email + "\n" + em_link +".\n If you didn't ask to reset your password, you can ignore this email. \r\n Thanks. \r\n Your D MARKET team.",#body
-        settings.EMAIL_HOST_USER,
-        [email],
-    )
-    return render(request,"User/HomePage.html",{"msg1":email})
+    if "uid" in request.session:
+        user = db.collection("tbl_user").document(request.session["uid"]).get().to_dict()
+        email = user["user_email"]
+        # print(email)
+        em_link = firebase_admin.auth.generate_password_reset_link(email)
+        send_mail(
+            'Reset your password ', #subject
+            "\rHello \r\nFollow this link to reset your Public Assist Hub site password for your " + email + "\n" + em_link +".\n If you didn't ask to reset your password, you can ignore this email. \r\n Thanks. \r\n Your D MARKET team.",#body
+            settings.EMAIL_HOST_USER,
+            [email],
+        )
+        return render(request,"User/HomePage.html",{"msg1":email})
+    else:
+        return redirect("Guest:login")
 
 # Search PWD
 def searchpwd(request):
-    district = db.collection("tbl_district").stream()
-    districtdata = getData(district)
-    return render(request,"User/Search_pwd.html",{"district":districtdata})
+    if "uid" in request.session:
+        district = db.collection("tbl_district").stream()
+        districtdata = getData(district)
+        return render(request,"User/Search_pwd.html",{"district":districtdata})
+    else:
+        return redirect("Guest:login")
 
 def ajaxsearchpwd(request):
     if request.GET.get("district"):
@@ -110,9 +125,12 @@ def ajaxsearchpwd(request):
 
 # Search MVD
 def searchmvd(request):
-    district = db.collection("tbl_district").stream()
-    districtdata = getData(district)
-    return render(request,"User/Search_mvd.html",{'data':districtdata})
+    if "uid" in request.session:
+        district = db.collection("tbl_district").stream()
+        districtdata = getData(district)
+        return render(request,"User/Search_mvd.html",{'data':districtdata})
+    else:
+        return redirect("Guest:login")
 
 def ajaxsearchmvd(request): 
     if request.GET.get("district"):
@@ -126,9 +144,12 @@ def ajaxsearchmvd(request):
 
 # Search Municipality
 def searchmunicipality(request):
-    district = db.collection("tbl_district").stream()
-    districtdata = getData(district)
-    return render(request,"User/Search_municipality.html",{'data':districtdata})
+    if "uid" in request.session:
+        district = db.collection("tbl_district").stream()
+        districtdata = getData(district)
+        return render(request,"User/Search_municipality.html",{'data':districtdata})
+    else:
+        return redirect("Guest:login")
 
 def ajaxsearchmunicipality(request): 
     if request.GET.get("district"):
@@ -142,9 +163,12 @@ def ajaxsearchmunicipality(request):
 
 # Search Kseb
 def searchKseb(request):
-    district = db.collection("tbl_district").stream()
-    districtdata = getData(district)
-    return render(request,"User/Search_kseb.html",{"data":districtdata})
+    if "uid" in request.session:
+        district = db.collection("tbl_district").stream()
+        districtdata = getData(district)
+        return render(request,"User/Search_kseb.html",{"data":districtdata})
+    else:
+        return redirect("Guest:login")
 
 def ajaxsearchkseb(request):
     ksebdata = []
@@ -175,25 +199,28 @@ def ajaxsearchkseb(request):
 
 # Mvd Request
 def mvdrequest(request, id):
-    if request.method == "POST":
-        photo = request.FILES.get("txt_photo")
-        if photo:
-            path = "MvdRequest/" + photo.name
-            sd.child(path).put(photo)
-            download_url = sd.child(path).get_url(None)
-        db.collection("tbl_request").add({"request_date":datetime.now(),
-                                        "request_photo":download_url,
-                                        "request_description":request.POST.get("txt_description"),
-                                        "user_id":request.session["uid"],
-                                        "mvd_id":id,
-                                        "request_reply":"",
-                                        "request_status":0,
-                                        "pwd_id":"",
-                                        "municipality_id":"",
-                                        "kseb_id":""})
-        return render(request,"User/Mvd_Request.html",{"msg":"Request Sended Sucessfully"})
+    if "uid" in request.session:
+        if request.method == "POST":
+            photo = request.FILES.get("txt_photo")
+            if photo:
+                path = "MvdRequest/" + photo.name
+                sd.child(path).put(photo)
+                download_url = sd.child(path).get_url(None)
+            db.collection("tbl_request").add({"request_date":datetime.now(),
+                                            "request_photo":download_url,
+                                            "request_description":request.POST.get("txt_description"),
+                                            "user_id":request.session["uid"],
+                                            "mvd_id":id,
+                                            "request_reply":"",
+                                            "request_status":0,
+                                            "pwd_id":"",
+                                            "municipality_id":"",
+                                            "kseb_id":""})
+            return render(request,"User/Mvd_Request.html",{"msg":"Request Sended Sucessfully"})
+        else:
+            return render(request,"User/Mvd_Request.html",)
     else:
-        return render(request,"User/Mvd_Request.html",)
+        return redirect("Guest:login")
 
 # Pwd Request
 def pwdrequest(request, id):
@@ -263,51 +290,57 @@ def ksebrequest(request, id):
 
 # My Request
 def myrequest(request):
-    mvdrequestdata =[]
-    pwdrequestdata = []
-    municipalityrequestdata = []
-    ksebrequestdata = []
-    mvdrequest = db.collection("tbl_request").where("user_id", "==", request.session["uid"]).where("mvd_id", "!=", "").stream()
-    pwdrequest = db.collection("tbl_request").where("user_id", "==", request.session["uid"]).where("pwd_id", "!=", "").stream()
-    municipalityrequest = db.collection("tbl_request").where("user_id", "==", request.session["uid"]).where("municipality_id", "!=", "").stream()
-    ksebrequest = db.collection("tbl_request").where("user_id", "==", request.session["uid"]).where("kseb_id", "!=", "").stream()
-    for m in mvdrequest:
-        mvd = m.to_dict()
-        mvddata = db.collection("tbl_mvd").document(mvd["mvd_id"]).get().to_dict()
-        mvdrequestdata.append({"data":m.to_dict(),"id":m.id,"mvd":mvddata})
-    for p in pwdrequest:
-        pwd = p.to_dict()
-        pwddata = db.collection("tbl_pwd").document(pwd["pwd_id"]).get().to_dict()
-        pwdrequestdata.append({"data":p.to_dict(),"id":p.id,"pwd":pwddata})
-    for mu in municipalityrequest:
-        municipality = mu.to_dict()
-        municipalitydata = db.collection("tbl_municipality").document(municipality["municipality_id"]).get().to_dict()
-        municipalityrequestdata.append({"data":mu.to_dict(),"id":mu.id,"municipality":municipalitydata})
-    for k in ksebrequest:
-        kseb = k.to_dict()
-        ksebdata = db.collection("tbl_kseb").document(kseb["kseb_id"]).get().to_dict()
-        ksebrequestdata.append({"data":k.to_dict(),"id":k.id,"kseb":ksebdata})
-    return render(request,"User/My_Request.html",{"mvdrequest":mvdrequestdata, "pwdrequest":pwdrequestdata, "municipalityrequest":municipalityrequestdata, "ksebrequest":ksebrequestdata})
+    if "uid" in request.session:
+        mvdrequestdata =[]
+        pwdrequestdata = []
+        municipalityrequestdata = []
+        ksebrequestdata = []
+        mvdrequest = db.collection("tbl_request").where("user_id", "==", request.session["uid"]).where("mvd_id", "!=", "").stream()
+        pwdrequest = db.collection("tbl_request").where("user_id", "==", request.session["uid"]).where("pwd_id", "!=", "").stream()
+        municipalityrequest = db.collection("tbl_request").where("user_id", "==", request.session["uid"]).where("municipality_id", "!=", "").stream()
+        ksebrequest = db.collection("tbl_request").where("user_id", "==", request.session["uid"]).where("kseb_id", "!=", "").stream()
+        for m in mvdrequest:
+            mvd = m.to_dict()
+            mvddata = db.collection("tbl_mvd").document(mvd["mvd_id"]).get().to_dict()
+            mvdrequestdata.append({"data":m.to_dict(),"id":m.id,"mvd":mvddata})
+        for p in pwdrequest:
+            pwd = p.to_dict()
+            pwddata = db.collection("tbl_pwd").document(pwd["pwd_id"]).get().to_dict()
+            pwdrequestdata.append({"data":p.to_dict(),"id":p.id,"pwd":pwddata})
+        for mu in municipalityrequest:
+            municipality = mu.to_dict()
+            municipalitydata = db.collection("tbl_municipality").document(municipality["municipality_id"]).get().to_dict()
+            municipalityrequestdata.append({"data":mu.to_dict(),"id":mu.id,"municipality":municipalitydata})
+        for k in ksebrequest:
+            kseb = k.to_dict()
+            ksebdata = db.collection("tbl_kseb").document(kseb["kseb_id"]).get().to_dict()
+            ksebrequestdata.append({"data":k.to_dict(),"id":k.id,"kseb":ksebdata})
+        return render(request,"User/My_Request.html",{"mvdrequest":mvdrequestdata, "pwdrequest":pwdrequestdata, "municipalityrequest":municipalityrequestdata, "ksebrequest":ksebrequestdata})
+    else:
+        return redirect("Guest:login")
 
 # Complaint
 def complaint(request):
-    complaint = db.collection("tbl_complaint").where("user_id", "==", request.session["uid"]).stream()
-    complaintdata = getData(complaint)
-    if request.method == "POST":
-        db.collection("tbl_complaint").add({"complaint_title":request.POST.get("txt_title"),
-                                            "complaint_content":request.POST.get("txt_content"),
-                                            "complaint_date":datetime.now(),
-                                            "complaint_reply":"",
-                                            "complaint_status":0,
-                                            "complaint_photo":"",
-                                            "user_id":request.session["uid"],
-                                            "municipality_id":"",
-                                            "kseb_id":"",
-                                            "pwd_id":"",
-                                            "mvd_id":""})
-        return render(request,"User/Complaint.html",{"msg":"Complaint Send Sucessfully"})
+    if "uid" in request.session:
+        complaint = db.collection("tbl_complaint").where("user_id", "==", request.session["uid"]).stream()
+        complaintdata = getData(complaint)
+        if request.method == "POST":
+            db.collection("tbl_complaint").add({"complaint_title":request.POST.get("txt_title"),
+                                                "complaint_content":request.POST.get("txt_content"),
+                                                "complaint_date":datetime.now(),
+                                                "complaint_reply":"",
+                                                "complaint_status":0,
+                                                "complaint_photo":"",
+                                                "user_id":request.session["uid"],
+                                                "municipality_id":"",
+                                                "kseb_id":"",
+                                                "pwd_id":"",
+                                                "mvd_id":""})
+            return render(request,"User/Complaint.html",{"msg":"Complaint Send Sucessfully"})
+        else:
+            return render(request,"User/Complaint.html",{"complaint":complaintdata})
     else:
-        return render(request,"User/Complaint.html",{"complaint":complaintdata})
+        return redirect("Guest:login")
 
 # Offical Complaint Municipality
 def OfficalComplaintMunicipality(request, id):
@@ -357,38 +390,44 @@ def OfficalComplaintMvd(request, id):
 
 # View Offical Complaint
 def viewofficialcomplaints(request):
-    municipality = db.collection("tbl_complaint").where("user_id", "==", request.session["uid"]).where("municipality_id", "!=", "").stream()
-    mvd = db.collection("tbl_complaint").where("user_id", "==", request.session["uid"]).where("mvd_id", "!=", "").stream()
-    munidata = []
-    mvddata = []
-    for i in municipality:
-        com = i.to_dict()
-        muni = db.collection("tbl_municipality").document(com["municipality_id"]).get().to_dict()
-        munidata.append({"data":com, "id":i.id, "municipality":muni})
-    for i in mvd:
-        com = i.to_dict()
-        mv = db.collection("tbl_mvd").document(com["mvd_id"]).get().to_dict()
-        mvddata.append({"data":com, "id":i.id, "mvd":mv})
-    return render(request,"User/ViewOfficalComplaint.html",{"mvdcomplaint":mvddata,"municipalitycomplaint":munidata})
+    if "uid" in request.session:
+        municipality = db.collection("tbl_complaint").where("user_id", "==", request.session["uid"]).where("municipality_id", "!=", "").stream()
+        mvd = db.collection("tbl_complaint").where("user_id", "==", request.session["uid"]).where("mvd_id", "!=", "").stream()
+        munidata = []
+        mvddata = []
+        for i in municipality:
+            com = i.to_dict()
+            muni = db.collection("tbl_municipality").document(com["municipality_id"]).get().to_dict()
+            munidata.append({"data":com, "id":i.id, "municipality":muni})
+        for i in mvd:
+            com = i.to_dict()
+            mv = db.collection("tbl_mvd").document(com["mvd_id"]).get().to_dict()
+            mvddata.append({"data":com, "id":i.id, "mvd":mv})
+        return render(request,"User/ViewOfficalComplaint.html",{"mvdcomplaint":mvddata,"municipalitycomplaint":munidata})
+    else:
+        return redirect("Guest:login")
 
 # Add Post
 def addpost(request):
-    posts = db.collection("tbl_post").where("user_id", "==", request.session["uid"]).stream()
-    postdata = getData(posts)
-    if request.method == "POST":
-        photo = request.FILES.get("txt_photo")
-        if photo:
-            path = "Post/" + photo.name
-            sd.child(path).put(photo)
-            download_url = sd.child(path).get_url(None)
-        db.collection("tbl_post").add({"post_caption":request.POST.get("txt_caption"),
-                                        "post_description":request.POST.get("txt_description"),
-                                        "post_photo":download_url,
-                                        "post_date":datetime.now(),
-                                        "user_id":request.session["uid"]})
-        return render(request,"User/AddPost.html",{"msg":"Post Added Sucessfully"})
+    if "uid" in request.session:
+        posts = db.collection("tbl_post").where("user_id", "==", request.session["uid"]).stream()
+        postdata = getData(posts)
+        if request.method == "POST":
+            photo = request.FILES.get("txt_photo")
+            if photo:
+                path = "Post/" + photo.name
+                sd.child(path).put(photo)
+                download_url = sd.child(path).get_url(None)
+            db.collection("tbl_post").add({"post_caption":request.POST.get("txt_caption"),
+                                            "post_description":request.POST.get("txt_description"),
+                                            "post_photo":download_url,
+                                            "post_date":datetime.now(),
+                                            "user_id":request.session["uid"]})
+            return render(request,"User/AddPost.html",{"msg":"Post Added Sucessfully"})
+        else:
+            return render(request,"User/AddPost.html",{"post":postdata})
     else:
-        return render(request,"User/AddPost.html",{"post":postdata})
+        return redirect("Guest:login")
 
 # Delete Post
 def deletepost(request, id):
@@ -397,29 +436,32 @@ def deletepost(request, id):
 
 # View Post
 def ajaxlike(request):
-    count = db.collection("tbl_like").where("user_id", "==", request.session["uid"]).where("post_id", "==", request.GET.get("postid")).stream()
-    ct = 0
-    for c in count:
-        ct = ct + 1
-        id = c.id
-    # print(ct)
-    if ct > 0:
-        db.collection("tbl_like").document(id).delete()
-        likescount = db.collection("tbl_like").where("post_id", "==", request.GET.get("postid")).get()
-        data_list_count = len(likescount)
-        # print(data_list_count)
-        return JsonResponse({"color":1,"count":data_list_count})
+    if "uid" in request.session:
+        count = db.collection("tbl_like").where("user_id", "==", request.session["uid"]).where("post_id", "==", request.GET.get("postid")).stream()
+        ct = 0
+        for c in count:
+            ct = ct + 1
+            id = c.id
+        # print(ct)
+        if ct > 0:
+            db.collection("tbl_like").document(id).delete()
+            likescount = db.collection("tbl_like").where("post_id", "==", request.GET.get("postid")).get()
+            data_list_count = len(likescount)
+            # print(data_list_count)
+            return JsonResponse({"color":1,"count":data_list_count})
+        else:
+            db.collection("tbl_like").add({"user_id":request.session["uid"],
+                                            "post_id":request.GET.get("postid"),
+                                            "kseb_id":"",
+                                            "pwd_id":"",
+                                            "mvd_id":"",
+                                            "municipality_id":""})
+            likescount = db.collection("tbl_like").where("post_id", "==", request.GET.get("postid")).get()
+            data_list_count = len(likescount)
+            # print(data_list_count)
+            return JsonResponse({"color":0,"count":data_list_count})
     else:
-        db.collection("tbl_like").add({"user_id":request.session["uid"],
-                                        "post_id":request.GET.get("postid"),
-                                        "kseb_id":"",
-                                        "pwd_id":"",
-                                        "mvd_id":"",
-                                        "municipality_id":""})
-        likescount = db.collection("tbl_like").where("post_id", "==", request.GET.get("postid")).get()
-        data_list_count = len(likescount)
-        # print(data_list_count)
-        return JsonResponse({"color":0,"count":data_list_count})
+        return redirect("Guest:login")
 
 def ajaxcomment(request):
     db.collection("tbl_comment").add({"post_id":request.GET.get("postid"),
@@ -474,14 +516,22 @@ def ajaxgetcommant(request):
 
 # FeedBack
 def feedback(request):
-    if request.method == "POST":
-        db.collection("tbl_feedback").add({"feedback_content":request.POST.get("txt_feedback"),
-                                             "feedback_date":datetime.now(),
-                                             "user_id":request.session["uid"],
-                                             "mvd_id":"",
-                                             "kseb_id":"",
-                                             "municipality_id":"",
-                                             "pwd_id":""})
-        return render(request,"User/FeedBack.html",{"msg":"Feedback Send Sucessfully"})
+    if "uid" in request.session:
+        if request.method == "POST":
+            db.collection("tbl_feedback").add({"feedback_content":request.POST.get("txt_feedback"),
+                                                "feedback_date":datetime.now(),
+                                                "user_id":request.session["uid"],
+                                                "mvd_id":"",
+                                                "kseb_id":"",
+                                                "municipality_id":"",
+                                                "pwd_id":""})
+            return render(request,"User/FeedBack.html",{"msg":"Feedback Send Sucessfully"})
+        else:
+            return render(request,"User/FeedBack.html",)
     else:
-        return render(request,"User/FeedBack.html",)
+        return redirect("Guest:login")
+
+# Logout
+def logout(request):
+    del request.session["uid"]
+    return redirect("Guest:login")

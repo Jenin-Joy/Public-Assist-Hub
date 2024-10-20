@@ -1,3 +1,5 @@
+{% extends 'MVD/Head.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -30,7 +32,7 @@
         <table cellpadding="10" align="center">
             <tr>
                 <td>FeedBack</td>
-                <td><textarea name="txt_feedback" id="" cols="20" rows="5"></textarea></td>
+                <td><textarea name="txt_feedback" required id="" cols="20" rows="5"></textarea></td>
             </tr>
             <tr>
                 <td colspan="2" align="center"><input type="submit" value="Send"></td>
@@ -45,3 +47,4 @@
     {% endif %}
 </body>
 </html>
+{% endblock content %}

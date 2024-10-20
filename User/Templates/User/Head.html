@@ -74,37 +74,52 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav ms-auto py-0">
-                        <a href="{% url 'Guest:index' %}" class="nav-item nav-link">Home</a>
-                        <a href="{% url 'Guest:user' %}" class="nav-item nav-link">User</a>
-                        <a href="{% url 'Guest:municipality' %}" class="nav-item nav-link">Municipality</a>
-                        <a href="{% url 'Guest:pwd' %}" class="nav-item nav-link">PWD</a>
-                        <!-- <div class="nav-item dropdown">
-                            <a href="#" class="nav-link" data-bs-toggle="dropdown"><span class="dropdown-toggle">Pages</span></a>
+                        <a href="{% url 'User:homepage' %}" class="nav-item nav-link">Home</a>
+                        <a href="{% url 'User:profile' %}" class="nav-item nav-link">Profile</a>
+                        <a href="{% url 'User:myrequest' %}" class="nav-item nav-link">My Request</a>
+                        <a href="{% url 'User:addpost' %}" class="nav-item nav-link">Post</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link" data-bs-toggle="dropdown"><span class="dropdown-toggle">Search</span></a>
                             <div class="dropdown-menu m-0">
-                                <a href="feature.html" class="dropdown-item">Feature</a>
-                                <a href="countries.html" class="dropdown-item">Countries</a>
-                                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-                                <a href="training.html" class="dropdown-item">Training</a>
-                                <a href="404.html" class="dropdown-item">404 Page</a>
+                                <a href="{% url 'User:searchmvd' %}" class="dropdown-item">MVD</a>
+                                <a href="{% url 'User:searchpwd' %}" class="dropdown-item">PWD</a>
+                                <a href="{% url 'User:searchmunicipality' %}" class="dropdown-item">MUNICIPALITY</a>
+                                <a href="{% url 'User:searchKseb' %}" class="dropdown-item">KSEB</a>
+                                <!-- <a href="404.html" class="dropdown-item">404 Page</a> -->
                             </div>
-                        </div> -->
-                        <a href="{% url 'Guest:mvd' %}" class="nav-item nav-link">MVD</a>
-                        <a href="{% url 'Guest:kseb' %}" class="nav-item nav-link">KSEB</a>
+                        </div>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link" data-bs-toggle="dropdown"><span class="dropdown-toggle">Message</span></a>
+                            <div class="dropdown-menu m-0">
+                                <a href="{% url 'User:viewofficialcomplaints' %}" class="dropdown-item">View Offical Complaints</a>
+                                <a href="{% url 'User:complaint' %}" class="dropdown-item">Web Complaints</a>
+                                <a href="{% url 'User:feedback' %}" class="dropdown-item">FeedBack</a>
+                            </div>
+                        </div>
+                        <!-- <a href="{% url 'Guest:mvd' %}" class="nav-item nav-link">MVD</a>
+                        <a href="{% url 'Guest:kseb' %}" class="nav-item nav-link">KSEB</a> -->
                     </div>
                     <!-- <button class="btn btn-primary btn-md-square border-secondary mb-3 mb-md-3 mb-lg-0 me-3" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search"></i></button> -->
-                    <a href="{% url 'Guest:login' %}" class="btn btn-primary border-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0">Login</a>
+                    <a href="{% url 'User:logout' %}" class="btn btn-primary border-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0">Logout</a>
                 </div>
             </nav>
         </div>
         <!-- Navbar & Hero End -->
-        {% block content %}
+         <style>
+            .con{
+                min-height: 57vh;
+            }
+         </style>
+        <div class="con" align="center">
+            {% block content %}
         {% endblock content %}
-
+        </div>
+        <br><br>
         
         <!-- Footer Start -->
         <div class="container-fluid footer py-5 wow fadeIn" data-wow-delay="0.2s">
             <div class="container py-5">
-                <div class="row g-5">
+                <!-- <div class="row g-5">
                     <div class="col-md-6 col-lg-6 col-xl-3">
                         <div class="footer-item d-flex flex-column">
                             <h4 class="text-secondary mb-4">Contact Info</h4>
@@ -159,7 +174,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
         <!-- Footer End -->

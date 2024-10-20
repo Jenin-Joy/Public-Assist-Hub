@@ -1,3 +1,5 @@
+{% extends 'Admin/Head.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +8,8 @@
     <title>Document</title>
 </head>
 <body>
-    <table cellpadding="10">
+    <div class="bg-light rounded h-100 p-4">
+    <table cellpadding="10" class="table table-hover">
         <tr>
             <td>#</td>
             <td>Name</td>
@@ -36,3 +39,4 @@
     </table>
 </body>
 </html>
+{% endblock content %}
