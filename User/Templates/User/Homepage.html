@@ -1,3 +1,5 @@
+{% extends 'User/Head.html' %}
+{% block content %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +27,7 @@
     </script>
     {% endif %}
 
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -96,6 +98,10 @@
         .disliked{
             color: white;
         }
+        .contents {
+            max-height: 400px;
+            overflow-y: auto;
+        }
     
     </style>
 </head>
@@ -150,7 +156,7 @@
           </div>
           <hr>
           <h5>Previous Comments</h5>
-          <ul class="list-group" id="comments">
+          <ul class="list-group contents" id="comments">
             <!-- Iterate over previous comments here -->
             {% for i in comment %}
             <li class="list-group-item d-flex align-items-center">
@@ -229,3 +235,4 @@
 </script>
 </body>
 </html>
+{% endblock content %}

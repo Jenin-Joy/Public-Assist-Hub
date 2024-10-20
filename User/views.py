@@ -410,20 +410,44 @@ def ajaxlike(request):
         # print(data_list_count)
         return JsonResponse({"color":1,"count":data_list_count})
     else:
-        db.collection("tbl_like").add({"user_id":request.session["uid"],"post_id":request.GET.get("postid")})
+        db.collection("tbl_like").add({"user_id":request.session["uid"],
+                                        "post_id":request.GET.get("postid"),
+                                        "kseb_id":"",
+                                        "pwd_id":"",
+                                        "mvd_id":"",
+                                        "municipality_id":""})
         likescount = db.collection("tbl_like").where("post_id", "==", request.GET.get("postid")).get()
         data_list_count = len(likescount)
         # print(data_list_count)
         return JsonResponse({"color":0,"count":data_list_count})
 
 def ajaxcomment(request):
-    db.collection("tbl_comment").add({"post_id":request.GET.get("postid"),"user_id":request.session["uid"],"command_content":request.GET.get("content")})
+    db.collection("tbl_comment").add({"post_id":request.GET.get("postid"),
+                                        "user_id":request.session["uid"],
+                                        "command_content":request.GET.get("content"),
+                                        "kseb_id":"",
+                                        "pwd_id":"",
+                                        "mvd_id":"",
+                                        "municipality_id":""})
     comment = db.collection("tbl_comment").where("post_id", "==", request.GET.get("postid")).stream()
     com_data = []
     for c in comment:
         cm = c.to_dict()
-        user = db.collection("tbl_user").document(cm["user_id"]).get().to_dict()
-        com_data.append({"comment":c.to_dict(),"id":c.id,"user":user})
+        if cm["pwd_id"] != "":
+            pwd = db.collection("tbl_pwd").document(cm["pwd_id"]).get().to_dict()
+            com_data.append({"comment":c.to_dict(),"id":c.id,"pwd":pwd,"photo":"0"})
+        elif cm["user_id"] != "":
+            user = db.collection("tbl_user").document(cm["user_id"]).get().to_dict()
+            com_data.append({"comment":c.to_dict(),"id":c.id,"user":user,"photo":"1"})
+        elif cm["kseb_id"] != "":
+            kseb = db.collection("tbl_kseb").document(cm["kseb_id"]).get().to_dict()
+            com_data.append({"comment":c.to_dict(),"id":c.id,"kseb":kseb,"photo":"0"})
+        elif cm["mvd_id"] != "":
+            mvd = db.collection("tbl_mvd").document(cm["mvd_id"]).get().to_dict()
+            com_data.append({"comment":c.to_dict(),"id":c.id,"mvd":mvd,"photo":"0"})
+        elif cm["municipality_id"] != "":
+            municipality = db.collection("tbl_municipality").document(cm["municipality_id"]).get().to_dict()
+            com_data.append({"comment":c.to_dict(),"id":c.id,"municipality":municipality,"photo":"0"})
     return render(request,"User/AjaxComment.html",{"comment":com_data})
 
 def ajaxgetcommant(request):
@@ -431,8 +455,21 @@ def ajaxgetcommant(request):
     com_data = []
     for c in comment:
         cm = c.to_dict()
-        user = db.collection("tbl_user").document(cm["user_id"]).get().to_dict()
-        com_data.append({"comment":c.to_dict(),"id":c.id,"user":user})
+        if cm["pwd_id"] != "":
+            pwd = db.collection("tbl_pwd").document(cm["pwd_id"]).get().to_dict()
+            com_data.append({"comment":c.to_dict(),"id":c.id,"pwd":pwd,"photo":"0"})
+        elif cm["user_id"] != "":
+            user = db.collection("tbl_user").document(cm["user_id"]).get().to_dict()
+            com_data.append({"comment":c.to_dict(),"id":c.id,"user":user,"photo":"1"})
+        elif cm["kseb_id"] != "":
+            kseb = db.collection("tbl_kseb").document(cm["kseb_id"]).get().to_dict()
+            com_data.append({"comment":c.to_dict(),"id":c.id,"kseb":kseb,"photo":"0"})
+        elif cm["mvd_id"] != "":
+            mvd = db.collection("tbl_mvd").document(cm["mvd_id"]).get().to_dict()
+            com_data.append({"comment":c.to_dict(),"id":c.id,"mvd":mvd,"photo":"0"})
+        elif cm["municipality_id"] != "":
+            municipality = db.collection("tbl_municipality").document(cm["municipality_id"]).get().to_dict()
+            com_data.append({"comment":c.to_dict(),"id":c.id,"municipality":municipality,"photo":"0"})
     return render(request,"User/AjaxComment.html",{"comment":com_data})
 
 # FeedBack

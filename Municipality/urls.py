@@ -26,4 +26,9 @@ urlpatterns = [
 
     #FeedBack
     path("feedback/", views.feedback, name="feedback"),
+
+    # View Post
+    path('ajaxlike/',views.ajaxlike,name="ajaxlike"),
+    path('ajaxcomment/',views.ajaxcomment,name="ajaxcomment"),
+    path('ajaxgetcommant/',views.ajaxgetcommant,name="ajaxgetcommant"),
 ]

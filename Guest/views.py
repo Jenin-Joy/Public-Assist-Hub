@@ -33,6 +33,9 @@ def getData(data):
         datas.append({"data":i.to_dict(),"id":i.id})
     return datas
 
+def index(request):
+    return render(request, 'Guest/index.html')
+    
 # Register municipality
 def municipality(request):
     districtdata = db.collection("tbl_district").stream()
